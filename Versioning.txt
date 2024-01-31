@@ -1,0 +1,60 @@
+####################################################################
+#                                                                  #
+#                                                                  #
+#             C H A N G E S                                        #
+#                                                                  #
+#                                                                  #
+####################################################################
+
+V 0.9.0
+- Methodology of how it differentiates US vs. Non-US RUs
+- Added labels in lines to differentiate help vs loss in total tax mask
+- Removed currency and tax inputs, and used another table on adjustment_path to grab that info.
+
+V 0.9.1
+- State Tax are calculated over IBIT instead of taxable income
+
+V 0.10.0
+- Changes on how segmentation method is made 
+
+V 0.10.1
+- Included segmented taxes not just the IBIT drivers as in version 0.10.0
+
+V 0.10.2
+- Changed Icon
+- Changed color in console
+- added local currency amount in GTD tax
+- converted to conventional sign to post in GTDs
+- added perms segmented
+- converted amounts to post instead of dollar, to local currency
+- added base64 library to read base64 icon to put into tkinter
+- added concepts to each main account into GTDs
+- removed "run segmentation button" (deprecated)
+
+V 0.10.4
+- Changed the state tax rate from 4.1 to 3.3
+- Changed the filter of GTDs Details
+- Changed negation of 799 accounts to assess as local accounts (impacts GTDs calculation)
+
+V 0.10.5
+- Added ALLOCATE_mannually segment on FS_EXM not found
+
+V 0.10.6
+- Added Pivot Table report
+- Added PERMS in USD, State in USD and Federal USD in segmentation tab
+- deprecated/removed, former segmentation code, + segmentation mask code
+- deprecated former code to get PPAs! 
+
+V 0.10.7
+- Added exception handling in pivot table generation (was causing an error when no data was downloaded from FED)
+
+V 0.10.8
+- Fixed CF216 forex mapping
+- Fixed Segmentation for IPES
+
+V 0.11.0
+- Added trend analysis chart on Tab A.TT
+
+
+
+
