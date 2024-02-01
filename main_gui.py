@@ -32,22 +32,23 @@ class MainGUI(tk.Tk):
     Class to encapsulate all properties and functions to the main window of the program.
     """
 
-    def __init__(self):
+    def __init__(self,email):
         """
         Initialize the program.
         """
         super().__init__()
-        os.system('cls')
+        #os.system('cls')
         print(spartanASCII.BANDEIRA_COXA)
 
         fed.variables.create_template_adjustment_table()
         self.create_folder_on_desktop()
         print("Logging credentials on Snowflake")
-        self.__FED = SnowSQL(os.environ["EMAIL"])
+        self.email = email
+        self.__FED = SnowSQL(self.email)
         self.adjustment_path = None
         self.wm_iconbitmap(fed.variables.generate_icon(styles.icon))
         self.geometry("1150x350")
-        self.title('SPARTA Tool v0.11.0')
+        self.title('SPARTA Tool v1.0.0')
         self.upperFrame = tk.Frame(self, bg='green')
         self.upperFrame.pack(fill="both", side=tk.TOP)
         self.Label1 = tk.Label(self.upperFrame, text="Streamlined Tax Tool", bg='green', fg='white',
@@ -107,6 +108,7 @@ class MainGUI(tk.Tk):
         tk.Button(text="MASSIVE", font=styles.header, command=self.massive_run).place(x=400, y=100)
 
 
+
         tk.Label(text="=========================================================================================",
                  font=styles.body).place(x=1, y=250)
 
@@ -158,7 +160,7 @@ class MainGUI(tk.Tk):
         file_name = f'{ru}-{period}-{r_year}--Generated-by-Sparta.xlsx'
         file_path = f"{os.environ['USERPROFILE']}\\Desktop\\Sparta_Output\\{file_name}"
         trial_balance_GAAP, trial_balance_local, trial_balance_delta_between_GAAPs, perms_from_excel, exchange_rate, \
-            credits_from_excel, GTD_detail, temps_from_excel = self.get_data_from_fed(
+            credits_from_excel, GTD_detail, temps_from_excel, signal = self.get_data_from_fed(
                 ru, r_year, period, currency, tax_rate, methodology)
 
         segmentation, tidy_segmentation = fed.get_segmentation_from_fed(self.__FED, ru, year, period)
@@ -224,7 +226,9 @@ class MainGUI(tk.Tk):
         if country == 'US':
             excel_manipulator.transform_in_us(wb)
 
-        excel_manipulator.paste_plot(xl, wb)
+        if signal:
+            excel_manipulator.paste_plot(xl, wb)
+
 
 
         wb.SaveAs(f"{file_path}", ConflictResolution=2)
@@ -285,7 +289,7 @@ class MainGUI(tk.Tk):
             pd.DataFrame, pd.DataFrame, pd.DataFrame]"""
 
         print("GAAP Trial Balance:")
-        trial_balance_GAAP = fed.get_trial_balance_gaap(self.__FED, ru, r_year, period,tax_rate)
+        trial_balance_GAAP, signal = fed.get_trial_balance_gaap(self.__FED, ru, r_year, period,tax_rate)
         print("Local Trial Balance:")
         trial_balance_local = fed.get_trial_balance_local(self.__FED, ru, r_year, period)
         print("GAAP & Local Trial Balance:")
@@ -304,7 +308,10 @@ class MainGUI(tk.Tk):
         credits_from_excel = fed.get_credits_from_excel(ru, r_year, period, self.adjustment_path)
 
         return trial_balance_GAAP, trial_balance_local, trial_balance_delta_between_GAAPs, perms_from_excel, \
-            exchange_rate, credits_from_excel, GTD_detail, temps_from_excel
+            exchange_rate, credits_from_excel, GTD_detail, temps_from_excel, signal
+
+
+
 
     @staticmethod
     def create_folder_on_desktop():
@@ -339,3 +346,9 @@ class MainGUI(tk.Tk):
         print(f'Reporting Unit country :{country}, currency {currency}, tax_rate {tax_rate}')
 
         return country, tax_rate, currency
+
+
+
+
+
+

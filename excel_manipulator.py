@@ -117,7 +117,7 @@ def create_total_tax_mask(xl, wb, dataframe_dictionary: dict,
     sheet.Cells(21, 5).Interior.Color = 16776960
 
     sheet.Cells(24, 2).Value = "IBIT after FSI"
-    sheet.Cells(24, 5).Value = "=+E18*E22-E21"
+    sheet.Cells(24, 5).Value = "=+(E18-E21)*E22"
 
     sheet.Cells(26, 2).Value = "(+) 2. Permanent Differences Add/(Subtract)"
     sheet.Cells(26, 5).Value = dataframe_dictionary.get('perms_from_excel')[

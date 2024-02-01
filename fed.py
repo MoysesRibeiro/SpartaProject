@@ -105,7 +105,7 @@ def get_trial_balance_gaap_for_chart(snow_flake_connection, ru, year, period, ST
 
     plt.savefig(f"{os.environ['USERPROFILE']}\\figure.png",bbox_inches = 'tight')
 
-
+    return True
 
 def get_trial_balance_gaap(snow_flake_connection, ru, year, period, STR):
     query = f'''
@@ -128,10 +128,15 @@ def get_trial_balance_gaap(snow_flake_connection, ru, year, period, STR):
     df['LC_AMOUNT'] = df['LC_AMOUNT'].astype(np.int64)
     df['LC_AMOUNT'] = np.round(df['LC_AMOUNT'], 0)
 
-    get_trial_balance_gaap_for_chart(snow_flake_connection, ru, year, period, STR)
+    signal = False
+
+    try:
+        signal = get_trial_balance_gaap_for_chart(snow_flake_connection, ru, year, period, STR)
+    except Exception as e:
+        print(e)
     df.to_excel(f"{os.environ['USERPROFILE']}\\SpartaTemp_GAAP.xlsx")
 
-    return df
+    return df,signal
 
 
 def get_trial_balance_local(snow_flake_connection, ru, year, period):
@@ -160,7 +165,6 @@ def get_trial_balance_local(snow_flake_connection, ru, year, period):
     df['MAIN'] = df['G/L Acct'].str[:2]
     df.to_excel(f"{os.environ['USERPROFILE']}\\SpartaTemp_local.xlsx")
     return df
-
 
 def scan_excahnge_rate(currency: str, data: type(dt.datetime)) -> object:
     """
@@ -280,7 +284,6 @@ def get_trial_balance_delta_between_gaaps_PL(snow_flake_connection, ru, year, pe
     merged.to_excel(f"{os.environ['USERPROFILE']}\\SpartaTemp_delta_between_GAAPs.xlsx")
     return merged, exchange_rate, GTD_detail
 
-
 def get_deferred_tax_balances(snow_flake_connection, ru, year, period):
     """
     Gets 465 and 710 accounts balances.
@@ -325,7 +328,6 @@ def get_deferred_tax_balances(snow_flake_connection, ru, year, period):
         df['CONCEPT'][i] = variables.dictionary_base_vs_concept.get(int(df['Base'][i]))
 
     return df
-
 
 def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, period, currency, tax_rate):
     data = variables.get_end_of_month_date(int(year), int(period))
@@ -423,7 +425,6 @@ def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, pe
 
     return merged, exchange_rate, GTD_detail
 
-
 def get_perms_from_excel(ru, year, period, p):
     print("Getting perms from :", p)
     df = pd.read_excel(p, sheet_name="Perms", dtype=str)
@@ -434,7 +435,6 @@ def get_perms_from_excel(ru, year, period, p):
     df.to_excel(f"{os.environ['USERPROFILE']}\\SpartaTemp_Perms.xlsx")
     return df
 
-
 def get_credits_from_excel(ru, year, period, p):
     df = pd.read_excel(p, sheet_name="Credits", dtype=str)
     df['CR_AMOUNT'] = df['CR_AMOUNT'].astype(np.float64)
@@ -444,7 +444,6 @@ def get_credits_from_excel(ru, year, period, p):
     df.to_excel(f"{os.environ['USERPROFILE']}\\SpartaTemp_Credits.xlsx")
     return df
 
-
 def get_temps_from_excel(ru, year, period, p):
     df = pd.read_excel(p, sheet_name="Temps", dtype=str)
     df['TEMP_AMOUNT'] = df['TEMP_AMOUNT'].astype(np.float64)
@@ -453,7 +452,6 @@ def get_temps_from_excel(ru, year, period, p):
     df = df[df['RU'] == ru]
     df.to_excel(f"{os.environ['USERPROFILE']}\\SpartaTemp_Temps.xlsx")
     return df
-
 
 def get_segmentation_from_fed(snow_flake_connection, ru, year, period):
     """
