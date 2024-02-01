@@ -4,6 +4,9 @@ import datetime as dt
 import os
 import base64
 import pandas as pd
+from tkinter import filedialog
+from email_settings import GetEmail
+
 
 __SCALLING_FACTOR__ = 1
 
@@ -48,23 +51,25 @@ def ask_for_path():
 
     p = f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_adjustment_path.txt'
     if file_exists(p):
-        b, t = is_file_not_empty()
+        b, t = is_file_not_empty(p)
         if b:
             if file_exists(t):
                 return str(t)
             else:
                 print("Warning Number 002: '", t, "' is not a valid file path, please inform new path:")
-                new_path = input()
+                new_path = filedialog.askopenfile(title = 'Select sparta master data path').name
                 with open(f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_adjustment_path.txt', 'w') as f:
                     f.write(new_path)
                     f.close()
+
+
                 ask_for_path()
         else:
             print(
                 f"""Warning Number 001 : The log file on {os.environ["USERPROFILE"]}\\.SpartaTool\\
                     sparta_adjustment_path.txt, does not contain a valid file_path, please inform the
                     adjustment table .xlsx file to look for.""")
-            text_to_input = input("Inform file_path to write on log file:")
+            text_to_input =  filedialog.askopenfile(title = 'Select sparta master data path').name
             with open(f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_adjustment_path.txt', 'w') as f:
                 f.write(text_to_input)
                 f.close()
@@ -73,9 +78,31 @@ def ask_for_path():
         set_text_file()
         ask_for_path()
 
+def get_correct_email():
+    app = GetEmail()
+    app.mainloop()
+    get_email()
 
-def is_file_not_empty():
-    p = f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_adjustment_path.txt'
+
+def get_email():
+
+    p = f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_email.txt'
+    if file_exists(p):
+        b, t = is_file_not_empty(p)
+        if b:
+            return t
+        else:
+            app = GetEmail()
+            app.mainloop()
+
+            get_email()
+    else:
+        set_email_file()
+        get_email()
+
+
+def is_file_not_empty(file):
+    p = file
     with open(p, 'r') as f:
         string = f.read()
 
@@ -90,6 +117,13 @@ def set_text_file():
     else:
         pass
 
+def set_email_file():
+    p = f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_email.txt'
+    if not file_exists(p):
+        with open(p, 'w') as f:
+            f.close()
+    else:
+        pass
 
 def file_exists(p):
     return os.path.isfile(p)

@@ -1,15 +1,12 @@
 """
 Created on Fri Aug 18th, 2023 16:05:35
-Updated on Thu Jan 19th, 2024 15:19:30
+Updated on Thu Jan 31st, 2024 15:19:30
 Name = "SpartaProject"
-Version = "0.12.0"
+Version = "1.0.0"
 Description = "To calculate tax provision"
 Authors = MoysesRibeiro & FelipeKnob
 License = "ExxonMobil Controllers-Tax"
 
-outra versao
-
-Moyses Version
 """
 from main_gui import MainGUI
 import os
