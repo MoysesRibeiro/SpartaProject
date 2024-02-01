@@ -7,13 +7,25 @@ Description = "To calculate tax provision"
 Authors = MoysesRibeiro & FelipeKnob
 License = "ExxonMobil Controllers-Tax"
 
+This is the version on moyses computer.
+
 """
+
+
 from main_gui import MainGUI
+from email_settings import GetEmail
+import variables
 import os
 
 if __name__ == '__main__':
     os.system("COLOR 2F")
-    app = MainGUI()
+
+    email = variables.get_email()
+
+    print(email)
+
+
+    app = MainGUI(email)
     app.resizable(True, True)
     app.mainloop()
 
