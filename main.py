@@ -6,6 +6,8 @@ Version = "0.12.0"
 Description = "To calculate tax provision"
 Authors = MoysesRibeiro & FelipeKnob
 License = "ExxonMobil Controllers-Tax"
+
+Moyses Version
 """
 from main_gui import MainGUI
 import os
