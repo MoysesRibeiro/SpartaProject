@@ -4,7 +4,7 @@ import threading
 import time
 from tkinter import IntVar
 import datetime as dt
-
+import variables
 '''
 Basic Structure
 '''
@@ -25,6 +25,7 @@ class SnowSQL:
 
         except Exception as e:
             print('FED connection error... due to ', e)
+            variables.get_correct_email()
             sys.exit()
 
     def execute_query(self, query, ru, year, period):
