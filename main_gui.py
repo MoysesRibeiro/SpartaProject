@@ -163,7 +163,7 @@ class MainGUI(tk.Tk):
             credits_from_excel, GTD_detail, temps_from_excel, signal = self.get_data_from_fed(
                 ru, r_year, period, currency, tax_rate, methodology)
 
-        segmentation, tidy_segmentation = fed.get_segmentation_from_fed(self.__FED, ru, year, period)
+        segmentation, tidy_segmentation = fed.get_segmentation_from_fed(self.__FED, ru, r_year, period)
 
         if len(trial_balance_GAAP) != 0:
             self.signal = True
