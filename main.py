@@ -2,12 +2,12 @@
 Created on Fri Aug 18th, 2023 16:05:35
 Updated on Thu Jan 31st, 2024 15:19:30
 Name = "SpartaProject"
-Version = "1.0.0"
+Version = "1.0.1"
 Description = "To calculate tax provision"
 Authors = MoysesRibeiro & FelipeKnob
 License = "ExxonMobil Controllers-Tax"
 
-This is the version on moyses computer.
+
 
 """
 
@@ -21,8 +21,6 @@ if __name__ == '__main__':
     os.system("COLOR 2F")
 
     email = variables.get_email()
-
-    print(email)
 
 
     app = MainGUI(email)

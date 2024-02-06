@@ -308,7 +308,7 @@ def create_cf216_mask(xl, wb, dataframe_dictionary: dict, currency: str) -> None
     sheet.Cells(23, 2).Value = 0
     sheet.Cells(23, 3).Value = 0
     sheet.Cells(23, 4).Value = 0
-    sheet.Cells(23, 5).Value = "=+A.TT!E18/'Exchange Rate'!B4-E10+SUM(B.GTDs!E:E)"
+    sheet.Cells(23, 5).Value = "=+A.TT!E18/'Exchange Rate'!B4-E10-SUM(B.GTDs!E:E)"
 
     sheet.Cells(23, 6).Value = "C"
     sheet.Cells(23, 6).Font.Bold = True
