@@ -173,7 +173,8 @@ def create_total_tax_mask(xl, wb, dataframe_dictionary: dict,
 
     sheet.Cells(56, 2).Value = "SECTION 4 : Trend Analysis"
     sheet.Cells(56, 2).Font.Bold = True
-    sheet.Cells(57, 2).Value = "Disclaimer: this is not required by audits or internal controls. It's purpose is limited only to assist in tax trends analysis with visuals."
+    sheet.Cells(57,
+                2).Value = "Disclaimer: this is not required by audits or internal controls. It's purpose is limited only to assist in tax trends analysis with visuals."
     sheet.Cells(57, 2).Font.Size = 9
 
     sheet.Cells(97, 2).Value = "Commentary:"
@@ -184,7 +185,6 @@ def create_total_tax_mask(xl, wb, dataframe_dictionary: dict,
     sheet.Columns("H:H").ColumnWidth = 25.55
     xl.ActiveWindow.DisplayGridlines = False
     sheet.Columns("E:E").NumberFormat = "#,##0"
-
 
     if country != "US":
         pass
@@ -468,23 +468,28 @@ def segment_taxes_based_on_ibit_segmentation(wb) -> None:
     :return: None
     """
     sheet = wb.Worksheets("D1.SEGMENTED_IBIT")
-    sheet.Cells(1, 11).Value = "State_Tax\nPL sign"
-    sheet.Cells(1, 12).Value = "Current_Federal_Tax\nPL sign"
-    sheet.Cells(1, 13).Value = "Deferred_Federal_Tax\nPL sign"
-    sheet.Cells(1, 14).Value = "Deferred_Tax_GAAP\nPL sign"
-    sheet.Cells(1, 15).Value = "Perms_USD"
-    sheet.Cells(1, 16).Value = "State_USD"
-    sheet.Cells(1, 17).Value = "Federal_USD"
+    sheet.Cells(1, 11).Value = "Identified\nItems"
+    sheet.Cells(1, 12).Value = "State_Tax\nPL sign"
+    sheet.Cells(1, 13).Value = "Current_Federal_Tax\nPL sign"
+    sheet.Cells(1, 14).Value = "Deferred_Federal_Tax\nPL sign"
+    sheet.Cells(1, 15).Value = "Deferred_Tax_GAAP\nPL sign"
+    sheet.Cells(1, 16).Value = "Perms_USD"
+    sheet.Cells(1, 17).Value = "State_USD"
+    sheet.Cells(1, 18).Value = "Federal_USD"
 
     # this section inputs formulas based on income tax calculated in the first tab
     for i in range(1, sheet.UsedRange.Rows.Count):  # to count how many rows are populated in that sheet
-        sheet.Cells(1 + i, 11).Value = """=INDIRECT("RC[-1]",FALSE)*A.TT!$E$51*'Exchange Rate'!$B$4"""
-        sheet.Cells(1 + i, 12).Value = """=INDIRECT("RC[-2]",FALSE)*(A.TT!$E$42-A.TT!$E$51)*'Exchange Rate'!$B$4"""
-        sheet.Cells(1 + i, 13).Value = """=INDIRECT("RC[-3]",FALSE)*A.TT!$E$43*'Exchange Rate'!$B$4"""
-        sheet.Cells(1 + i, 14).Value = """=INDIRECT("RC[-4]",FALSE)*A.TT!$E$44*'Exchange Rate'!$B$4"""
-        sheet.Cells(1 + i, 15).Value = """=-INDIRECT("RC[-5]",FALSE)*A.TT!$E$26/'Exchange Rate'!$B$4"""
-        sheet.Cells(1 + i, 16).Value = """=-INDIRECT("RC[-6]",FALSE)*A.TT!$E$51"""
-        sheet.Cells(1 + i, 17).Value = """=-INDIRECT("RC[-7]",FALSE)*A.TT!$E$52"""
+        sheet.Cells(1 + i, 10).Value = """=IF(INDIRECT("RC[1]",FALSE) = 0,\nINDIRECT("RC[-6]",FALSE)\n/(SUM(INDIRECT("C[-6]",FALSE))-SUM(INDIRECT("C[1]",FALSE))),\n0)"""
+        sheet.Cells(1 + i, 11).Value = 0
+        sheet.Cells(1 + i,
+                    12).Value = """=INDIRECT("RC[-1]",FALSE)\n*A.TT!$D$51\n\n+INDIRECT("RC[-2]",FALSE)\n*(A.TT!$E$51*'Exchange Rate'!$B$5\n-(SUM(INDIRECT("C[-1]",FALSE))*A.TT!$D$51))"""
+        sheet.Cells(1 + i,
+                    13).Value = """=+(INDIRECT("RC[-2]",FALSE)\n*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))\n\n+(A.TT!$E$52*'Exchange Rate'!$B$5\n-(SUM(INDIRECT("C[-2]",FALSE))*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51))))\n*INDIRECT("RC[-3]",FALSE)"""
+        sheet.Cells(1 + i, 14).Value = """=INDIRECT("RC[-4]",FALSE)*A.TT!$E$43*'Exchange Rate'!$B$4"""
+        sheet.Cells(1 + i, 15).Value = """=INDIRECT("RC[-5]",FALSE)*A.TT!$E$44*'Exchange Rate'!$B$4"""
+        #sheet.Cells(1 + i, 16).Value = """=-INDIRECT("RC[-6]",FALSE)*A.TT!$E$26/'Exchange Rate'!$B$4"""
+        #sheet.Cells(1 + i, 17).Value = """=-INDIRECT("RC[-7]",FALSE)*A.TT!$E$51"""
+        #sheet.Cells(1 + i, 18).Value = """=-INDIRECT("RC[-8]",FALSE)*A.TT!$E$52"""
 
         sheet.Cells(1 + i, 9).Interior.Color = 65535 if sheet.Cells(1 + i, 9).Value is None else -4142
 
@@ -501,7 +506,7 @@ def segment_taxes_based_on_ibit_segmentation(wb) -> None:
     sheet.Columns("J:J").NumberFormat = "0.0%"
     sheet.Columns("K:Q").NumberFormat = "#,##0"
 
-    sheet.Range(f"K2:N{sheet.UsedRange.Rows.Count}").Interior.Color = 14548957
+    sheet.Range(f"L2:O{sheet.UsedRange.Rows.Count}").Interior.Color = 14548957
 
     return None
 
@@ -524,7 +529,7 @@ def generate_pivot_table(file_path, er, country, wb, xl) -> None:
 
     try:
 
-        pt_cache = wb.PivotCaches().Create(1, SourceData=ws_data.Range("B:Q"))
+        pt_cache = wb.PivotCaches().Create(1, SourceData=ws_data.Range("B:R"))
 
         pt = pt_cache.CreatePivotTable(ws_report.Range("A1"), "MyReport")
 
@@ -605,8 +610,8 @@ def generate_pivot_table(file_path, er, country, wb, xl) -> None:
         print("Warning error due to: ", e)
         pass
 
-def paste_plot(xl,wb):
 
+def paste_plot(xl, wb):
     sheet = wb.Sheets('A.TT')
     wb.Worksheets('A.TT').Activate()
     sheet.Cells(54, 2).Value = "'+ TOTAL TAX USD"
