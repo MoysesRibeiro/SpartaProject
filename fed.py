@@ -477,18 +477,9 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period):
                  AND RIGHT(LEFT("G/L Acct",6),2) <> '98'
                  AND LEFT("G/L Acct",4) <> '0089'
                  AND LEFT("G/L Acct",4) <> '0090'
-                 AND "Record Type" = '0'
+                 AND "Record Type" IN ('0','2') 
                 AND "Source Table" ='YWS01T'
-             OR "Company Code" = '{ru}'
-                 AND "Fiscal Yr" = '{year}'
-                 AND "Period" <= '{period}'
-                 AND LEFT("G/L Acct",2) = '00'
-                 AND LEFT("G/L Acct",2) <> 'N0'
-                 AND RIGHT(LEFT("G/L Acct",6),2) <> '98'
-                 AND LEFT("G/L Acct",4) <> '0089'
-                 AND LEFT("G/L Acct",4) <> '0090'
-                 AND "Record Type" = '2'  
-                 AND "Source Table" ='YWS01T'
+             
              GROUP BY "Bus Area", WWPC
              ORDER BY "Bus Area", WWPC
          '''
@@ -513,6 +504,8 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period):
     tidy_df['FS_EXM'].fillna('ALLOCATE_MANUALLY', inplace=True)
     #tidy_df.dropna(subset=['FS_EXM'], inplace=True)
 
-    tidy_df['Allocation'] = tidy_df['IBIT'] / tidy_df['IBIT'].sum()
+    #tidy_df['Allocation'] = tidy_df['IBIT'] / tidy_df['IBIT'].sum()
+    tidy_df['Allocation'] = 0
+    tidy_df.rename(columns={'IBIT':'IBIT_USD HELP(HURT)'},inplace=True)
 
     return df, tidy_df
