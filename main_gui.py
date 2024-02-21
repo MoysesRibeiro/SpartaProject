@@ -75,6 +75,7 @@ class MainGUI(tk.Tk):
         self.period.set(str(month) if month > 9 else f'0{str(month)}')
         self.signal = False
 
+
         bgcolor = 'blue'
         fgcolor = 'black'
 
@@ -93,6 +94,14 @@ class MainGUI(tk.Tk):
         tk.Entry(self, width=10, font=styles.body, textvariable=self.period, fg=bgcolor).pack(in_=self.second_frame1,
                                                                                               side=tk.LEFT)
 
+        l8 = tk.Label(self, text="YTD or SA:", font=styles.header, fg=fgcolor)
+        l8.pack(in_=self.second_frame1, side=tk.LEFT)
+        cm2 = ["YTD", "SA"]
+        self.ytd = tk.StringVar()
+        self.ytd.set("ytd")
+        drop = tk.OptionMenu(self, self.ytd, *cm2)
+        drop.pack(in_=self.second_frame1, side=tk.LEFT)
+
         l7 = tk.Label(self, text="Method:", font=styles.header, fg=fgcolor)
         l7.pack(in_=self.second_frame1, side=tk.LEFT)
         cm = ["Local", "GAAP"]
@@ -107,8 +116,6 @@ class MainGUI(tk.Tk):
         tk.Button(text="RUN !", font=styles.header, command=self.run).place(x=200, y=100)
         tk.Button(text="MASSIVE", font=styles.header, command=self.massive_run).place(x=400, y=100)
 
-
-
         tk.Label(text="=========================================================================================",
                  font=styles.body).place(x=1, y=250)
 
@@ -121,7 +128,6 @@ class MainGUI(tk.Tk):
             text=spartanASCII.spartanASCII,
             font=styles.ascii).place(x=800, y=35)
 
-
     def run(self):
         """Runs the program for an single Reporting Unit using method
         "run_individual_ru" below."""
@@ -132,12 +138,12 @@ class MainGUI(tk.Tk):
         period = self.period.get()
         methodology = self.methodology.get()
 
-        self.run_individual_ru(ru, r_year, period, methodology)
+        self.run_individual_ru(ru, r_year, period, methodology, self.ytd.get())
 
         print(f'Total execution time : {dt.datetime.now()-NOW}')
 
 
-    def run_individual_ru(self, ru: str, r_year: str, period: str, methodology: str) -> None:
+    def run_individual_ru(self, ru: str, r_year: str, period: str, methodology: str, ytd :str) -> None:
         """
         Run the program for a single reporting unit.
 
@@ -146,6 +152,7 @@ class MainGUI(tk.Tk):
         :param r_year: the reporting year
         :param period: the period, meaning month no.
         :param methodology: type int methodology used, if using local books or ExxonBooks
+        :param ytd: string telling if it is a YTD Calc or not
         """
 
         try:
@@ -154,16 +161,14 @@ class MainGUI(tk.Tk):
             print(e)
             return
 
-
-
         self.signal = False
         file_name = f'{ru}-{period}-{r_year}--Generated-by-Sparta.xlsx'
         file_path = f"{os.environ['USERPROFILE']}\\Desktop\\Sparta_Output\\{file_name}"
         trial_balance_GAAP, trial_balance_local, trial_balance_delta_between_GAAPs, perms_from_excel, exchange_rate, \
             credits_from_excel, GTD_detail, temps_from_excel, signal = self.get_data_from_fed(
-                ru, r_year, period, currency, tax_rate, methodology)
+                ru, r_year, period, currency, tax_rate, methodology, ytd)
 
-        segmentation, tidy_segmentation = fed.get_segmentation_from_fed(self.__FED, ru, r_year, period)
+        segmentation, tidy_segmentation = fed.get_segmentation_from_fed(self.__FED, ru, r_year, period, ytd)
 
         if len(trial_balance_GAAP) != 0:
             self.signal = True
@@ -273,7 +278,7 @@ class MainGUI(tk.Tk):
 
         print(f"Elapsed time {later - now}")
 
-    def get_data_from_fed(self, ru: str, r_year: str, period: str, currency: str, tax_rate: float, method: str):
+    def get_data_from_fed(self, ru: str, r_year: str, period: str, currency: str, tax_rate: float, method: str,ytd: str):
         """To retrieve data from FED and return Trial Balances plus Perms
         from MS Excel stored in the lan folder.
 
@@ -283,6 +288,7 @@ class MainGUI(tk.Tk):
         :param currency: local currency of ru, used to revaluate
          tax at USD
         :param tax_rate: country tax rate
+        :param ytd: string telling if it is a YTD Calc or not
 
         :rtype:tuple[
             pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame,
@@ -331,7 +337,7 @@ class MainGUI(tk.Tk):
 
         return filenames
 
-    def get_master(self,ru):
+    def get_master(self, ru):
         self.adjustment_path = fed.variables.get_path()
         master = pd.read_excel(io=self.adjustment_path, sheet_name='RU_Master', dtype={'RU': str})
         try:
