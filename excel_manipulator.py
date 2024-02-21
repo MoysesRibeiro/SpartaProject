@@ -468,7 +468,7 @@ def segment_taxes_based_on_ibit_segmentation(wb) -> None:
     :return: None
     """
     sheet = wb.Worksheets("D1.SEGMENTED_IBIT")
-    sheet.Cells(1, 11).Value = "Identified\nItems"
+    sheet.Cells(1, 11).Value = "Special\nItems_USD_BT"
     sheet.Cells(1, 12).Value = "State_Tax\nPL sign"
     sheet.Cells(1, 13).Value = "Current_Federal_Tax\nPL sign"
     sheet.Cells(1, 14).Value = "Deferred_Federal_Tax\nPL sign"
@@ -480,16 +480,16 @@ def segment_taxes_based_on_ibit_segmentation(wb) -> None:
     # this section inputs formulas based on income tax calculated in the first tab
     for i in range(1, sheet.UsedRange.Rows.Count):  # to count how many rows are populated in that sheet
         sheet.Cells(1 + i, 10).Value = """=IF(INDIRECT("RC[1]",FALSE) = 0,\nINDIRECT("RC[-6]",FALSE)\n/(SUM(INDIRECT("C[-6]",FALSE))-SUM(INDIRECT("C[1]",FALSE))),\n0)"""
-        sheet.Cells(1 + i, 11).Value = 0
+        sheet.Cells(1 + i, 11).Value = 0 if  sheet.Cells(1 + i, 8).Value != 100 else sheet.Cells(1 + i, 4).Value
         sheet.Cells(1 + i,
-                    12).Value = """=INDIRECT("RC[-1]",FALSE)\n*A.TT!$D$51\n\n+INDIRECT("RC[-2]",FALSE)\n*(A.TT!$E$51*'Exchange Rate'!$B$5\n-(SUM(INDIRECT("C[-1]",FALSE))*A.TT!$D$51))"""
+                    12).Value = """=INDIRECT("RC[-1]",FALSE)\n*A.TT!$D$51\n\n+INDIRECT("RC[-2]",FALSE)\n*(A.TT!$E$51*'Exchange Rate'!$B$4\n-(SUM(INDIRECT("C[-1]",FALSE))*A.TT!$D$51))"""
         sheet.Cells(1 + i,
-                    13).Value = """=+(INDIRECT("RC[-2]",FALSE)\n*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))\n\n+(A.TT!$E$52*'Exchange Rate'!$B$5\n-(SUM(INDIRECT("C[-2]",FALSE))*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51))))\n*INDIRECT("RC[-3]",FALSE)"""
+                    13).Value = """=+(INDIRECT("RC[-2]",FALSE)\n*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))\n\n+(A.TT!$E$42*'Exchange Rate'!$B$4\n-(SUM(INDIRECT("C[-2]",FALSE))*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51))))\n*INDIRECT("RC[-3]",FALSE)"""
         sheet.Cells(1 + i, 14).Value = """=INDIRECT("RC[-4]",FALSE)*A.TT!$E$43*'Exchange Rate'!$B$4"""
         sheet.Cells(1 + i, 15).Value = """=INDIRECT("RC[-5]",FALSE)*A.TT!$E$44*'Exchange Rate'!$B$4"""
-        #sheet.Cells(1 + i, 16).Value = """=-INDIRECT("RC[-6]",FALSE)*A.TT!$E$26/'Exchange Rate'!$B$4"""
-        #sheet.Cells(1 + i, 17).Value = """=-INDIRECT("RC[-7]",FALSE)*A.TT!$E$51"""
-        #sheet.Cells(1 + i, 18).Value = """=-INDIRECT("RC[-8]",FALSE)*A.TT!$E$52"""
+        sheet.Cells(1 + i, 16).Value = """=-INDIRECT("RC[-6]",FALSE)*A.TT!$E$26/'Exchange Rate'!$B$4"""
+        sheet.Cells(1 + i, 17).Value = """=-INDIRECT("RC[-5]",FALSE)/'Exchange Rate'!$B$4"""
+        sheet.Cells(1 + i, 18).Value = """=-(INDIRECT("RC[-5]",FALSE)+INDIRECT("RC[-3]",FALSE)+INDIRECT("RC[-4]",FALSE))/'Exchange Rate'!$B$4"""
 
         sheet.Cells(1 + i, 9).Interior.Color = 65535 if sheet.Cells(1 + i, 9).Value is None else -4142
 
@@ -507,6 +507,7 @@ def segment_taxes_based_on_ibit_segmentation(wb) -> None:
     sheet.Columns("K:Q").NumberFormat = "#,##0"
 
     sheet.Range(f"L2:O{sheet.UsedRange.Rows.Count}").Interior.Color = 14548957
+    sheet.Range(f"k2:k{sheet.UsedRange.Rows.Count}").Interior.Color = 16777062
 
     return None
 
@@ -522,7 +523,7 @@ def generate_pivot_table(file_path, er, country, wb, xl) -> None:
     """
 
     ws_data = wb.Worksheets("D1.SEGMENTED_IBIT")
-    ws_data.Columns("N:Q").EntireColumn.Hidden = True
+    ws_data.Columns("P:R").EntireColumn.Hidden = True
     ws_report = wb.Worksheets('D.SEGMENTATION_MASK')
 
     ws_report.Columns("A:K").Delete(Shift=-4159)
@@ -547,12 +548,12 @@ def generate_pivot_table(file_path, er, country, wb, xl) -> None:
         field_columns['FS_EXM'].Position = 1
 
         field_values = {}
-        field_values['IBIT'] = pt.PivotFields('IBIT')
+        field_values['IBIT_USD HELP(HURT)'] = pt.PivotFields('IBIT_USD HELP(HURT)')
         field_values['State_USD'] = pt.PivotFields('State_USD')
         field_values['Perms_USD'] = pt.PivotFields('Perms_USD')
 
-        field_values['IBIT'].Orientation = 4
-        field_values['IBIT'].Function = -4157
+        field_values['IBIT_USD HELP(HURT)'].Orientation = 4
+        field_values['IBIT_USD HELP(HURT)'].Function = -4157
         # field_values['IBIT'].NumberFormat = "#,##0.00"
 
         field_values['State_USD'].Orientation = 4
@@ -569,7 +570,7 @@ def generate_pivot_table(file_path, er, country, wb, xl) -> None:
         ws_report.PivotTables("MyReport").DataPivotField.Position = 1
 
         ws_report.PivotTables("MyReport").CalculatedFields().Add(Name="Taxable_Income",
-                                                                 Formula="=Perms_USD+IBIT +State_USD",
+                                                                 Formula="=Perms_USD+'IBIT_USD HELP(HURT)' +State_USD",
                                                                  UseStandardFormula=True)
 
         pt.AddDataField(pt.PivotFields('Taxable_Income'))
@@ -580,7 +581,7 @@ def generate_pivot_table(file_path, er, country, wb, xl) -> None:
         # field_values['Federal_USD'].NumberFormat = "#,##0.00"
 
         ws_report.PivotTables("MyReport").CalculatedFields().Add(Name="Earnings_AT",
-                                                                 Formula="=Federal_USD+State_USD+IBIT",
+                                                                 Formula="=Federal_USD+State_USD+'IBIT_USD HELP(HURT)'",
                                                                  UseStandardFormula=True)
 
         pt.AddDataField(pt.PivotFields('Earnings_AT'))
