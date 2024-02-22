@@ -489,8 +489,8 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period, ytd):
         query = f'''
                          SELECT "Bus Area",WWPC ,
                                 SUM(CASE WHEN LEFT("G/L Acct",4) NOT IN ('0089','0090') THEN "GC Amount" ELSE 0 END) AS IBIT,
-                                SUM(CASE WHEN LEFT("G/L Acct",4) = '0089' THEN "LC Amount" ELSE 0 END) AS CIT_LC,
-                                SUM(CASE WHEN LEFT("G/L Acct",4) = '0090' THEN "LC Amount" ELSE 0 END) AS DIT_LC
+                                SUM(CASE WHEN LEFT("G/L Acct",4) = '0089' THEN "LC Amount" ELSE 0 END) AS CIT_LC_PLSIGN,
+                                SUM(CASE WHEN LEFT("G/L Acct",4) = '0090' THEN "LC Amount" ELSE 0 END) AS DIT_LC_PLSIGN
                          FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_JET_WWSL_TOTAL_ACTUAL_ALL
                          WHERE "Company Code" = '{ru}'
                              AND "Fiscal Yr" = '{year}'
