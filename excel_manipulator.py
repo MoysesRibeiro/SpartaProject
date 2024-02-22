@@ -468,7 +468,7 @@ def segment_taxes_based_on_ibit_segmentation(wb) -> None:
     :return: None
     """
     sheet = wb.Worksheets("D1.SEGMENTED_IBIT")
-    sheet.Cells(1, 11).Value = "Special\nItems_USD_BT"
+    sheet.Cells(1, 11).Value = "Special\nItems_LC_BT"
     sheet.Cells(1, 12).Value = "State_Tax\nPL sign"
     sheet.Cells(1, 13).Value = "Current_Federal_Tax\nPL sign"
     sheet.Cells(1, 14).Value = "Deferred_Federal_Tax\nPL sign"
@@ -479,8 +479,8 @@ def segment_taxes_based_on_ibit_segmentation(wb) -> None:
 
     # this section inputs formulas based on income tax calculated in the first tab
     for i in range(1, sheet.UsedRange.Rows.Count):  # to count how many rows are populated in that sheet
-        sheet.Cells(1 + i, 10).Value = """=IF(INDIRECT("RC[1]",FALSE) = 0,\nINDIRECT("RC[-6]",FALSE)\n/(SUM(INDIRECT("C[-6]",FALSE))-SUM(INDIRECT("C[1]",FALSE))),\n0)"""
-        sheet.Cells(1 + i, 11).Value = 0 if  sheet.Cells(1 + i, 8).Value != 100 else sheet.Cells(1 + i, 4).Value
+        sheet.Cells(1 + i, 10).Value = """=IF(INDIRECT("RC[1]",FALSE) = 0,\nINDIRECT("RC[-6]",FALSE)\n/(SUM(INDIRECT("C[-6]",FALSE))-SUM(INDIRECT("C[1]",FALSE))/'Exchange Rate'!$B$4),\n0)"""
+        sheet.Cells(1 + i, 11).Value = 0 if  sheet.Cells(1 + i, 8).Value != 100 else sheet.Cells(1 + i, 4).Value * wb.Worksheets("Exchange Rate").Cells(4,2).Value
         sheet.Cells(1 + i,
                     12).Value = """=INDIRECT("RC[-1]",FALSE)\n*A.TT!$D$51\n\n+INDIRECT("RC[-2]",FALSE)\n*(A.TT!$E$51*'Exchange Rate'!$B$4\n-(SUM(INDIRECT("C[-1]",FALSE))*A.TT!$D$51))"""
         sheet.Cells(1 + i,
