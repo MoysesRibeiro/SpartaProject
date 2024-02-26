@@ -208,7 +208,7 @@ class MainGUI(tk.Tk):
 
 
 
-        excel_manipulator.segment_taxes_based_on_ibit_segmentation(wb=wb)
+        excel_manipulator.segment_taxes_based_on_ibit_segmentation(wb=wb, ytd= ytd)
 
         wb.SaveAs(f"{file_path}", ConflictResolution=2)
         wb.Close()

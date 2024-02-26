@@ -29,10 +29,11 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bae8dee9-df16-4246-910d-8a105af73638" name="Changes" comment="aJUSTES COM VALORES DE TAX DE MESES ANTERIORES PARA COMPARAR COM NON US RUS">
+    <list default="true" id="bae8dee9-df16-4246-910d-8a105af73638" name="Changes" comment="Som other adjustments related to sign convention clarity on Segmented IBIT tab">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/excel_manipulator.py" beforeDir="false" afterPath="$PROJECT_DIR$/excel_manipulator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fed.py" beforeDir="false" afterPath="$PROJECT_DIR$/fed.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +140,14 @@
       <option name="project" value="LOCAL" />
       <updated>1708543892107</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Som other adjustments related to sign convention clarity on Segmented IBIT tab">
+      <created>1708622434789</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1708622434789</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -170,29 +178,30 @@
     <MESSAGE value="Updates in comments adding author" />
     <MESSAGE value="compare to main now" />
     <MESSAGE value="aJUSTES COM VALORES DE TAX DE MESES ANTERIORES PARA COMPARAR COM NON US RUS" />
-    <option name="LAST_COMMIT_MESSAGE" value="aJUSTES COM VALORES DE TAX DE MESES ANTERIORES PARA COMPARAR COM NON US RUS" />
+    <MESSAGE value="Som other adjustments related to sign convention clarity on Segmented IBIT tab" />
+    <option name="LAST_COMMIT_MESSAGE" value="Som other adjustments related to sign convention clarity on Segmented IBIT tab" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1515" height="147" key="GridCell.Tab.0.bottom" timestamp="1708621270778">
+    <state width="1515" height="147" key="GridCell.Tab.0.bottom" timestamp="1708976908175">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="147" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708621270778" />
-    <state width="1515" height="147" key="GridCell.Tab.0.center" timestamp="1708621270778">
+    <state width="1515" height="147" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708976908175" />
+    <state width="1515" height="147" key="GridCell.Tab.0.center" timestamp="1708976908175">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="147" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708621270778" />
-    <state width="1515" height="147" key="GridCell.Tab.0.left" timestamp="1708621270777">
+    <state width="1515" height="147" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708976908175" />
+    <state width="1515" height="147" key="GridCell.Tab.0.left" timestamp="1708976908175">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="147" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708621270777" />
-    <state width="1515" height="147" key="GridCell.Tab.0.right" timestamp="1708621270778">
+    <state width="1515" height="147" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708976908175" />
+    <state width="1515" height="147" key="GridCell.Tab.0.right" timestamp="1708976908175">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="147" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708621270778" />
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1708543901703">
+    <state width="1515" height="147" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708976908175" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2" timestamp="1708977405983">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708543901703" />
+    <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1708977405983" />
     <state x="586" y="326" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1708529848021">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

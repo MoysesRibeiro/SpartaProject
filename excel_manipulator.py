@@ -459,7 +459,7 @@ def transform_in_us(wb):
     wb.Sheets("A.TT").Cells(38, 5).Value = 0
 
 
-def segment_taxes_based_on_ibit_segmentation(wb) -> None:
+def segment_taxes_based_on_ibit_segmentation(wb, ytd) -> None:
     """
     Gets the segmented IBIT and then allocate taxes based on
     that segmented IBIT.
@@ -484,12 +484,15 @@ def segment_taxes_based_on_ibit_segmentation(wb) -> None:
         sheet.Cells(1 + i,
                     12).Value = """=INDIRECT("RC[-1]",FALSE)\n*A.TT!$D$51\n\n+INDIRECT("RC[-2]",FALSE)\n*(A.TT!$E$51*'Exchange Rate'!$B$4\n-(SUM(INDIRECT("C[-1]",FALSE))*A.TT!$D$51))"""
         sheet.Cells(1 + i,
-                    13).Value = """=+(INDIRECT("RC[-2]",FALSE)\n*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))\n\n+(A.TT!$E$42*'Exchange Rate'!$B$4\n-(SUM(INDIRECT("C[-2]",FALSE))*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51))))\n*INDIRECT("RC[-3]",FALSE)"""
+                    13).Value = """=+(INDIRECT("RC[-2]",FALSE)\n*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))\n\n+(A.TT!$E$42*'Exchange Rate'!$B$4\n-(SUM(INDIRECT("C[-2]",FALSE))*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51))))\n*INDIRECT("RC[-3]",FALSE)\n-INDIRECT("RC[-8]",FALSE)"""
         sheet.Cells(1 + i, 14).Value = """=INDIRECT("RC[-4]",FALSE)*A.TT!$E$43*'Exchange Rate'!$B$4"""
-        sheet.Cells(1 + i, 15).Value = """=INDIRECT("RC[-5]",FALSE)*A.TT!$E$44*'Exchange Rate'!$B$4"""
+        sheet.Cells(1 + i, 15).Value = """=INDIRECT("RC[-5]",FALSE)*A.TT!$E$44*'Exchange Rate'!$B$4-INDIRECT("RC[-9]",FALSE)"""
         sheet.Cells(1 + i, 16).Value = """=-INDIRECT("RC[-6]",FALSE)*A.TT!$E$26/'Exchange Rate'!$B$4"""
         sheet.Cells(1 + i, 17).Value = """=-INDIRECT("RC[-5]",FALSE)/'Exchange Rate'!$B$4"""
-        sheet.Cells(1 + i, 18).Value = """=-(INDIRECT("RC[-5]",FALSE)+INDIRECT("RC[-3]",FALSE)+INDIRECT("RC[-4]",FALSE))/'Exchange Rate'!$B$4"""
+        sheet.Cells(1 + i, 18).Value = """=-(INDIRECT("RC[-5]",FALSE)+INDIRECT("RC[-3]",FALSE)+INDIRECT("RC[-4]",FALSE)+INDIRECT("RC[-13]",FALSE)+INDIRECT("RC[-12]",FALSE))/'Exchange Rate'!$B$4"""
+
+        sheet.Cells(1 + i, 5).Value = 0 if ytd == 'ytd' else  sheet.Cells(1 + i, 5).Value
+        sheet.Cells(1 + i, 6).Value = 0 if ytd == 'ytd' else  sheet.Cells(1 + i, 6).Value
 
         sheet.Cells(1 + i, 9).Interior.Color = 65535 if sheet.Cells(1 + i, 9).Value is None else -4142
 
