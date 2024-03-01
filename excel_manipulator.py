@@ -140,36 +140,52 @@ def create_total_tax_mask(xl, wb, dataframe_dictionary: dict,
     sheet.Cells(40, 2).Value = "SECTION 2 : GAAP DEFERRED TAX"
     sheet.Cells(40, 2).Font.Bold = True
 
-    sheet.Cells(42, 2).Value = "Current Tax in USD"
+    sheet.Cells(41, 5).Value = "USD"
+    sheet.Cells(41, 7).Value = "LC"
+
+    sheet.Cells(42, 2).Value = "Current Tax"
     if methodology == "Local":
         sheet.Cells(42, 5).Value = "=+E37/'Exchange Rate'!B4-E43"
+        sheet.Cells(42, 7).Value = "=+E42*'Exchange Rate'!$B$4"
 
     elif methodology == "GAAP":
         sheet.Cells(42, 5).Value = "+E37/'Exchange Rate'!B4-E43-E44"
+        sheet.Cells(42, 7).Value = "=+E42*'Exchange Rate'!$B$4"
 
-    sheet.Cells(43, 2).Value = "Deferred Tax USD"
+    sheet.Cells(43, 2).Value = "Deferred Tax"
     sheet.Cells(43, 5).Value = "=-IFERROR(SUM(Temps!F:F)/'Exchange Rate'!B4*A.TT!E30,0)"
+    sheet.Cells(43, 7).Value = "=+E43*'Exchange Rate'!$B$4"
 
     sheet.Cells(44, 2).Value = "'+ EM Only Deferred Tax"
     sheet.Cells(44, 5).Value = dataframe_dictionary.get('trial_balance_delta_between_GAAPs')['TAX'].sum()
+    sheet.Cells(44, 7).Value = "=+E44*'Exchange Rate'!$B$4"
 
-    sheet.Cells(46, 2).Value = "'= TOTAL TAX USD"
+    sheet.Cells(46, 2).Value = "'= TOTAL TAX"
     sheet.Cells(46, 5).Value = "=SUM(E42:E44)"
+    sheet.Cells(46, 7).Value = "=SUM(G42:G44)"
 
     # SECTION 3 : FEDERAL VS. STATE
     sheet.Cells(48, 2).Value = "SECTION 3 : Tax Break-down"
     sheet.Cells(48, 2).Font.Bold = True
 
+    sheet.Cells(51, 5).Value = "USD"
+    sheet.Cells(51, 7).Value = "LC"
+
     sheet.Cells(51, 2).Value = "State Tax"
     sheet.Cells(51, 4).Value = 0.033 if country == 'US' else 0
+
     sheet.Cells(51, 4).NumberFormat = "0.0%"
     sheet.Cells(51, 5).Value = "=+(E24*D51)/'Exchange Rate'!B4"
+    sheet.Cells(51, 7).Value = "=+E51*'Exchange Rate'!$B$4"
+
 
     sheet.Cells(52, 2).Value = "Federal Tax"
     sheet.Cells(52, 5).Value = "=+E46-E51"
+    sheet.Cells(52, 7).Value = "=+E52*'Exchange Rate'!$B$4"
 
     sheet.Cells(54, 2).Value = "'+ TOTAL TAX USD"
     sheet.Cells(54, 5).Value = '=+E51+E52'
+    sheet.Cells(54, 7).Value = '=+G51+G52'
 
     sheet.Cells(56, 2).Value = "SECTION 4 : Trend Analysis"
     sheet.Cells(56, 2).Font.Bold = True
@@ -422,6 +438,10 @@ def format_cells(xl, wb):
             i.Cells(30, 5).NumberFormat = "0.00%"
             # to recalculate formula
             i.Cells(43, 5).Value = "=-IFERROR(SUM(Temps!F:F)/'Exchange Rate'!B4*A.TT!E30,0)"
+            i.Range("G41:G54").Font.ThemeColor = 1
+            i.Range("G41:G54").Font.TintAndShade = -0.349986266670736
+
+
             continue
         if i.Name == "C.CF216":
             i.Columns("A:O").Font.Name = "Courier New"
