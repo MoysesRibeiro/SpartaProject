@@ -453,7 +453,7 @@ def get_temps_from_excel(ru, year, period, p):
     df.to_excel(f"{os.environ['USERPROFILE']}\\SpartaTemp_Temps.xlsx")
     return df
 
-def get_segmentation_from_fed(snow_flake_connection, ru, year, period):
+def get_segmentation_from_fed(snow_flake_connection, ru, year, period, ytd):
     """
     Gets Ibit segmented by BA and WWPC from table
     FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_JET_WWSL_TOTAL_ACTUAL_ALL.
@@ -462,31 +462,58 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period):
     :param ru: reporting unit
     :param year: year
     :param period: Period string of two caracters, example 09 or 12
+    :param ytd: string telling if it is a YTD Calc or not
     :return: None
     """
     print('Querying segmentation from Special Ledger: ')
 
-    query = f'''
-             SELECT "Bus Area",WWPC , sum("GC Amount") AS IBIT
-                 FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_JET_WWSL_TOTAL_ACTUAL_ALL
-             WHERE "Company Code" = '{ru}'
-                 AND "Fiscal Yr" = '{year}'
-                 AND "Period" <= '{period}'
-                 AND LEFT("G/L Acct",2) = '00'
-                 AND LEFT("G/L Acct",2) <> 'N0'
-                 AND RIGHT(LEFT("G/L Acct",6),2) <> '98'
-                 AND LEFT("G/L Acct",4) <> '0089'
-                 AND LEFT("G/L Acct",4) <> '0090'
-                 AND "Record Type" IN ('0','2') 
-                AND "Source Table" ='YWS01T'
-             
-             GROUP BY "Bus Area", WWPC
-             ORDER BY "Bus Area", WWPC
-         '''
+    if ytd == 'ytd':
+        query = f'''
+                 SELECT "Bus Area",WWPC , sum("GC Amount") AS IBIT
+                     FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_JET_WWSL_TOTAL_ACTUAL_ALL
+                 WHERE "Company Code" = '{ru}'
+                     AND "Fiscal Yr" = '{year}'
+                     AND "Period" <= '{period}'
+                     AND LEFT("G/L Acct",2) = '00'
+                     AND LEFT("G/L Acct",2) <> 'N0'
+                     AND RIGHT(LEFT("G/L Acct",6),2) <> '98'
+                     AND LEFT("G/L Acct",4) <> '0089'
+                     AND LEFT("G/L Acct",4) <> '0090'
+                     AND "Record Type" IN ('0','2') 
+                    AND "Source Table" ='YWS01T'
+                 
+                 GROUP BY "Bus Area", WWPC
+                 ORDER BY "Bus Area", WWPC
+             '''
+    else:
+        query = f'''
+                         SELECT "Bus Area",WWPC ,
+                                SUM(CASE WHEN LEFT("G/L Acct",4) NOT IN ('0089','0090') THEN "GC Amount" ELSE 0 END) AS IBIT,
+                                SUM(CASE WHEN LEFT("G/L Acct",4) = '0089' THEN "LC Amount" ELSE 0 END) AS CIT_LC_PLSIGN,
+                                SUM(CASE WHEN LEFT("G/L Acct",4) = '0090' THEN "LC Amount" ELSE 0 END) AS DIT_LC_PLSIGN
+                         FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_JET_WWSL_TOTAL_ACTUAL_ALL
+                         WHERE "Company Code" = '{ru}'
+                             AND "Fiscal Yr" = '{year}'
+                             AND "Period" <= '{period}'
+                             AND LEFT("G/L Acct",2) = '00'
+                             AND LEFT("G/L Acct",2) <> 'N0'
+                             AND RIGHT(LEFT("G/L Acct",6),2) <> '98'
+
+                             AND "Record Type" IN ('0','2') 
+                            AND "Source Table" ='YWS01T'
+
+                         GROUP BY "Bus Area", WWPC
+                         ORDER BY "Bus Area", WWPC
+                     '''
 
     df = snow_flake_connection.execute_query(query, ru, year, period).fetch_pandas_all()
     df['IBIT'] = df['IBIT'].astype(np.int64)
     df['IBIT'] = -np.round(df['IBIT'], 0)
+    if ytd != 'ytd':
+        df['CIT_LC_PLSIGN'] = df['CIT_LC_PLSIGN'].astype(np.int64)
+        df['CIT_LC_PLSIGN'] = -np.round(df['CIT_LC_PLSIGN'], 0)
+        df['DIT_LC_PLSIGN'] = df['DIT_LC_PLSIGN'].astype(np.int64)
+        df['DIT_LC_PLSIGN'] = -np.round(df['DIT_LC_PLSIGN'], 0)
     #df.to_excel(f"{os.environ['USERPROFILE']}\\SpartaSEG_GAAP.xlsx")
     tidy_df = df[df['WWPC'] != '']  # to filter out blank_values
 
@@ -507,5 +534,7 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period):
     #tidy_df['Allocation'] = tidy_df['IBIT'] / tidy_df['IBIT'].sum()
     tidy_df['Allocation'] = 0
     tidy_df.rename(columns={'IBIT':'IBIT_USD HELP(HURT)'},inplace=True)
+    if ytd != 'ytd':
+        tidy_df.drop(labels=['EffDate','BA'], axis='columns', inplace=True)
 
     return df, tidy_df
