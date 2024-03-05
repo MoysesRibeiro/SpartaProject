@@ -37,6 +37,8 @@ def create_folder():
         os.system(f'mkdir {p}')
 
 
+
+
 def get_end_of_month_date(year, period):
     year = year if period < 12 else year + 1
     period = period + 1 if period < 12 else 1
@@ -110,6 +112,8 @@ def is_file_not_empty(file):
 
 
 def set_text_file():
+
+    create_folder()
     p = f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_adjustment_path.txt'
     if not file_exists(p):
         with open(p, 'w') as f:
@@ -117,8 +121,18 @@ def set_text_file():
     else:
         pass
 
-def set_email_file():
     p = f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_email.txt'
+    if not file_exists(p):
+        with open(p, 'w') as f:
+            f.close()
+    else:
+        pass
+
+def set_email_file():
+    create_folder()
+    set_text_file()
+    p = f'{os.environ["USERPROFILE"]}\\.SpartaTool\\sparta_email.txt'
+
     if not file_exists(p):
         with open(p, 'w') as f:
             f.close()

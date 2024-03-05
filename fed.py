@@ -510,10 +510,10 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period, ytd):
     df['IBIT'] = df['IBIT'].astype(np.int64)
     df['IBIT'] = -np.round(df['IBIT'], 0)
     if ytd != 'ytd':
-        df['CIT_LC'] = df['CIT_LC'].astype(np.int64)
-        df['CIT_LC'] = -np.round(df['CIT_LC'], 0)
-        df['DIT_LC'] = df['DIT_LC'].astype(np.int64)
-        df['DIT_LC'] = -np.round(df['DIT_LC'], 0)
+        df['CIT_LC_PLSIGN'] = df['CIT_LC_PLSIGN'].astype(np.int64)
+        df['CIT_LC_PLSIGN'] = -np.round(df['CIT_LC_PLSIGN'], 0)
+        df['DIT_LC_PLSIGN'] = df['DIT_LC_PLSIGN'].astype(np.int64)
+        df['DIT_LC_PLSIGN'] = -np.round(df['DIT_LC_PLSIGN'], 0)
     #df.to_excel(f"{os.environ['USERPROFILE']}\\SpartaSEG_GAAP.xlsx")
     tidy_df = df[df['WWPC'] != '']  # to filter out blank_values
 
