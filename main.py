@@ -2,7 +2,7 @@
 Created on Fri Aug 18th, 2023 16:05:35
 Updated on Thu Jan 31st, 2024 15:19:30
 Name = "SpartaProject"
-Version = "1.0.1"
+Version = "1.0.5"
 Description = "To calculate tax provision"
 Authors = MoysesRibeiro & FelipeKnob & GuilhermeAzolin
 License = "ExxonMobil Controllers-Tax"

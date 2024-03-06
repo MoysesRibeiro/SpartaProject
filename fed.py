@@ -527,7 +527,7 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period, ytd):
     tidy_df = pd.merge(tidy_df, pcmapping_df[["WWPC", "Profit Center"]], on='WWPC', how='left')
     tidy_df.drop_duplicates(['Bus Area','WWPC','IBIT'], inplace=True)
 
-    tidy_df = tidy_df[tidy_df['IBIT'] != 0]
+    #tidy_df = tidy_df[tidy_df['IBIT'] != 0]
     tidy_df['FS_EXM'].fillna('ALLOCATE_MANUALLY', inplace=True)
     #tidy_df.dropna(subset=['FS_EXM'], inplace=True)
 

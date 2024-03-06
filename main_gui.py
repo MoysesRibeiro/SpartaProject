@@ -48,7 +48,7 @@ class MainGUI(tk.Tk):
         self.adjustment_path = None
         self.wm_iconbitmap(fed.variables.generate_icon(styles.icon))
         self.geometry("1150x350")
-        self.title('SPARTA Tool v1.0.0')
+        self.title('SPARTA Tool v1.0.5')
         self.upperFrame = tk.Frame(self, bg='green')
         self.upperFrame.pack(fill="both", side=tk.TOP)
         self.Label1 = tk.Label(self.upperFrame, text="Streamlined Tax Tool", bg='green', fg='white',
@@ -257,11 +257,12 @@ class MainGUI(tk.Tk):
             r_year = temp[1]
             period = temp[2]
             methodology = temp[3]
+            ytd = temp[4]
 
             r_list = [RU, r_year, period, methodology]
 
             try:
-                self.run_individual_ru(RU, r_year, period, methodology)
+                self.run_individual_ru(RU, r_year, period, methodology,ytd)
                 print(self.signal)
             except Exception as e:
                 r_list.append(str(e))
