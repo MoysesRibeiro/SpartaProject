@@ -149,7 +149,7 @@ def create_total_tax_mask(xl, wb, dataframe_dictionary: dict,
         sheet.Cells(42, 7).Value = "=+E42*'Exchange Rate'!$B$4"
 
     elif methodology == "GAAP":
-        sheet.Cells(42, 5).Value = "+E37/'Exchange Rate'!B4-E43-E44"
+        sheet.Cells(42, 5).Value = "=+E37/'Exchange Rate'!B4-E43-E44"
         sheet.Cells(42, 7).Value = "=+E42*'Exchange Rate'!$B$4"
 
     sheet.Cells(43, 2).Value = "Deferred Tax"
@@ -405,7 +405,7 @@ def create_memo_forex(wb) -> None:
     sheet.Cells(4, 1).Value = "Add Exchange Rate Delta"
     sheet.Cells(4,
                 2).Value = """=-((C.CF216!E10-'C1.MEMO FOREX'!B3)-(A.TT!E18/'Exchange Rate'!B4
-                -'C1.MEMO FOREX'!B2)-SUM(B.GTDs!E:E))"""
+                -'C1.MEMO FOREX'!B2)+SUM(B.GTDs!E:E))"""
 
     sheet.Cells(6, 1).Value = "Total"
     sheet.Cells(6, 2).Value = "=+B2-B3+B4"
@@ -478,6 +478,12 @@ def transform_in_us(wb):
     # wb.Sheets("A.TT").Cells(14, 5).Value = "=-SUM(TB_GAAP!C:C)"
     wb.Sheets("A.TT").Cells(38, 5).Value = 0
 
+def general_comment(i):
+        return f"It is the {i} rate on the Special Items value,\
+     or the remaining {i}  after the special items, allocated based on the IBIT % \
+     as in column J Allocation less the amount already booked (which is shown in columns following IBIT).\n\n \
+     Basically if the Special Items has any value different than 0 it will calculate exactly the {i} rate upon that item\
+     else it will distribute the remaining tax based on IBIT"
 
 def segment_taxes_based_on_ibit_segmentation(wb, ytd) -> None:
     """
@@ -487,6 +493,8 @@ def segment_taxes_based_on_ibit_segmentation(wb, ytd) -> None:
     :param wb: WorkBook object
     :return: None
     """
+    ytd = ytd.lower()
+
     sheet = wb.Worksheets("D1.SEGMENTED_IBIT")
     sheet.Cells(1, 11).Value = "Special\nItems_LC_BT"
     sheet.Cells(1, 12).Value = "State_Tax\nPL sign"
@@ -505,6 +513,7 @@ def segment_taxes_based_on_ibit_segmentation(wb, ytd) -> None:
                     12).Value = """=INDIRECT("RC[-1]",FALSE)\n*A.TT!$D$51\n\n+INDIRECT("RC[-2]",FALSE)\n*(A.TT!$E$51*'Exchange Rate'!$B$4\n-(SUM(INDIRECT("C[-1]",FALSE))*A.TT!$D$51))"""
         sheet.Cells(1 + i,
                     13).Value = """=IF(INDIRECT("RC[-3]",FALSE) <> 0,\nINDIRECT("RC[-3]",FALSE)*(A.TT!$G$52-SUM(INDIRECT("C[-2]",FALSE))*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))\n-INDIRECT("RC[-8]",FALSE),\n((INDIRECT("RC[-2]",FALSE)-INDIRECT("RC[-1]",FALSE))\n*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))-INDIRECT("RC[-8]",FALSE))"""
+
         sheet.Cells(1 + i, 14).Value = """=INDIRECT("RC[-4]",FALSE)*A.TT!$E$43*'Exchange Rate'!$B$4"""
         sheet.Cells(1 + i, 15).Value = """=INDIRECT("RC[-5]",FALSE)*A.TT!$E$44*'Exchange Rate'!$B$4-INDIRECT("RC[-9]",FALSE)"""
         sheet.Cells(1 + i, 16).Value = """=-INDIRECT("RC[-6]",FALSE)*A.TT!$E$26/'Exchange Rate'!$B$4"""
@@ -532,6 +541,12 @@ def segment_taxes_based_on_ibit_segmentation(wb, ytd) -> None:
     sheet.Range(f"L2:O{sheet.UsedRange.Rows.Count}").Interior.Color = 14548957
     sheet.Range(f"k2:k{sheet.UsedRange.Rows.Count}").Interior.Color = 16777062
 
+
+
+    sheet.Range("L1").AddComment(general_comment('state tax'))
+    sheet.Range("M1").AddComment(general_comment('federal tax'))
+    sheet.Range("N1").AddComment(general_comment('deferred tax'))
+    sheet.Range("O1").AddComment(general_comment('deferred tax GAAP'))
     return None
 
 

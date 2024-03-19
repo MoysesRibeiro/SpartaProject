@@ -25,7 +25,7 @@ z = dt.date.fromisoformat(y)
 year = z - dt.timedelta(days=1)
 month = year.month
 year = year.year
-
+version = '1.1.0'
 
 class MainGUI(tk.Tk):
     """
@@ -48,7 +48,7 @@ class MainGUI(tk.Tk):
         self.adjustment_path = None
         self.wm_iconbitmap(fed.variables.generate_icon(styles.icon))
         self.geometry("1150x350")
-        self.title('SPARTA Tool v1.0.5')
+        self.title(f'SPARTA Tool v{version}')
         self.upperFrame = tk.Frame(self, bg='green')
         self.upperFrame.pack(fill="both", side=tk.TOP)
         self.Label1 = tk.Label(self.upperFrame, text="Streamlined Tax Tool", bg='green', fg='white',

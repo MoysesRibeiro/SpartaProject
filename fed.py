@@ -309,6 +309,7 @@ def get_deferred_tax_balances(snow_flake_connection, ru, year, period):
             '''
     df = snow_flake_connection.execute_query(query_dt, ru, year, period).fetch_pandas_all()
 
+
     df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
     df['LC_AMOUNT'] = df['LC_AMOUNT'].astype(np.int64)
     # df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
@@ -327,6 +328,7 @@ def get_deferred_tax_balances(snow_flake_connection, ru, year, period):
     for i in range(len(df['CONCEPT'])):
         df['CONCEPT'][i] = variables.dictionary_base_vs_concept.get(int(df['Base'][i]))
 
+    #df.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_2.xlsx')
     return df
 
 def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, period, currency, tax_rate):
@@ -409,10 +411,12 @@ def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, pe
     merged_detail = merged
     merged.reset_index(inplace=True)
 
+    merged.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_1.xlsx')
+    df_dt.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_2.xlsx')
 
     merged = pd.concat(objs = [merged,df_dt[['CONCEPT','LC_AMOUNT']]], axis = 0, join = 'outer')
 
-    merged = merged.groupby('CONCEPT').sum()[["GAAP", "Local", "GTD (Delta)", "TAX","LC_AMOUNT"]]
+    merged = merged.groupby(['Main','CONCEPT']).sum()[["GAAP", "Local", "GTD (Delta)", "TAX","LC_AMOUNT"]]
     merged.rename(columns={"LC_AMOUNT":"PRIOR_YEAR"},inplace=True)
     merged['POSTING'] = merged['TAX'] - merged['PRIOR_YEAR']
 
@@ -466,8 +470,8 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period, ytd):
     :return: None
     """
     print('Querying segmentation from Special Ledger: ')
-
-    if ytd == 'ytd':
+    ytd = ytd.lower()
+    if str(ytd).lower() == 'ytd':
         query = f'''
                  SELECT "Bus Area",WWPC , sum("GC Amount") AS IBIT
                      FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_JET_WWSL_TOTAL_ACTUAL_ALL
@@ -526,8 +530,7 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period, ytd):
     pcmapping_df = pcmapping_df[pcmapping_df['RU'].isin([ru, 'ALL'])]
     tidy_df = pd.merge(tidy_df, pcmapping_df[["WWPC", "Profit Center"]], on='WWPC', how='left')
     tidy_df.drop_duplicates(['Bus Area','WWPC','IBIT'], inplace=True)
-
-    #tidy_df = tidy_df[tidy_df['IBIT'] != 0]
+    tidy_df= tidy_df.loc[(tidy_df[tidy_df.columns[2:5]] != 0).all(axis=1)]
     tidy_df['FS_EXM'].fillna('ALLOCATE_MANUALLY', inplace=True)
     #tidy_df.dropna(subset=['FS_EXM'], inplace=True)
 
