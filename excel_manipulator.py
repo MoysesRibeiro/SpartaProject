@@ -512,7 +512,7 @@ def segment_taxes_based_on_ibit_segmentation(wb, ytd) -> None:
         sheet.Cells(1 + i,
                     12).Value = """=INDIRECT("RC[-1]",FALSE)\n*A.TT!$D$51\n\n+INDIRECT("RC[-2]",FALSE)\n*(A.TT!$E$51*'Exchange Rate'!$B$4\n-(SUM(INDIRECT("C[-1]",FALSE))*A.TT!$D$51))"""
         sheet.Cells(1 + i,
-                    13).Value = """=IF(INDIRECT("RC[-3]",FALSE) <> 0,\nINDIRECT("RC[-3]",FALSE)*(A.TT!$G$52-SUM(INDIRECT("C[-2]",FALSE))*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))\n-INDIRECT("RC[-8]",FALSE),\n((INDIRECT("RC[-2]",FALSE)-INDIRECT("RC[-1]",FALSE))\n*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))-INDIRECT("RC[-8]",FALSE))"""
+                    13).Value = """=IF(INDIRECT("RC[-3]",FALSE) <> 0,\nINDIRECT("RC[-3]",FALSE)*(A.TT!$G$52-SUM(INDIRECT("C[-2]",FALSE))*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))\n-INDIRECT("RC[-8]",FALSE),\n((INDIRECT("RC[-2]",FALSE))\n*((A.TT!$E$30-A.TT!$D$51)/(1-A.TT!$D$51)))-INDIRECT("RC[-8]",FALSE))"""
 
         sheet.Cells(1 + i, 14).Value = """=INDIRECT("RC[-4]",FALSE)*A.TT!$E$43*'Exchange Rate'!$B$4"""
         sheet.Cells(1 + i, 15).Value = """=INDIRECT("RC[-5]",FALSE)*A.TT!$E$44*'Exchange Rate'!$B$4-INDIRECT("RC[-9]",FALSE)"""
