@@ -310,7 +310,7 @@ def get_deferred_tax_balances(snow_flake_connection, ru, year, period):
     df = snow_flake_connection.execute_query(query_dt, ru, year, period).fetch_pandas_all()
 
 
-    df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
+    #df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
     df['LC_AMOUNT'] = df['LC_AMOUNT'].astype(np.int64)
     # df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
     df = np.round(df, 0)
@@ -324,11 +324,12 @@ def get_deferred_tax_balances(snow_flake_connection, ru, year, period):
         else:
             df['Base'][i] = df["G/L Acct"][i][1:7]
 
-    df['CONCEPT'] = ''
+    df['CONCEPT'] = 'Other'
     for i in range(len(df['CONCEPT'])):
         df['CONCEPT'][i] = variables.dictionary_base_vs_concept.get(int(df['Base'][i]))
 
     #df.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_2.xlsx')
+    df = df.groupby('CONCEPT').sum()['LC_AMOUNT']
     return df
 
 def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, period, currency, tax_rate):
@@ -362,7 +363,6 @@ def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, pe
 
 
     df = snow_flake_connection.execute_query(query, ru, year, period).fetch_pandas_all()
-    df_dt = get_deferred_tax_balances(snow_flake_connection, ru, year, period)
 
     df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
     df['LC_AMOUNT'] = df['LC_AMOUNT'].astype(np.int64)
@@ -406,25 +406,25 @@ def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, pe
     merged['CONCEPT'] = ''
     for i in range(len(merged['CONCEPT'])):
         merged['CONCEPT'][i] = variables.dictionary_main_vs_concept.get(int(merged.index[i]))
-
-
-    merged_detail = merged
     merged.reset_index(inplace=True)
+    merged.set_index(['Main','CONCEPT'],inplace=True)
+    merged = merged.loc[(merged[merged.columns[0:2]]!=0).all(axis=1)]
+    merged['IS_TAXABLE'] ='Y'
 
-    merged.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_1.xlsx')
-    df_dt.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_2.xlsx')
 
-    merged = pd.concat(objs = [merged,df_dt[['CONCEPT','LC_AMOUNT']]], axis = 0, join = 'outer')
+ #   merged_detail = merged
 
-    merged = merged.groupby(['Main','CONCEPT']).sum()[["GAAP", "Local", "GTD (Delta)", "TAX","LC_AMOUNT"]]
-    merged.rename(columns={"LC_AMOUNT":"PRIOR_YEAR"},inplace=True)
-    merged['POSTING'] = merged['TAX'] - merged['PRIOR_YEAR']
 
-#
+ #   merged = pd.concat(objs = [merged,df_dt[['CONCEPT','LC_AMOUNT']]], axis = 0, join = 'outer')
+
+ #   merged = merged.groupby(['Main','CONCEPT']).sum()[["GAAP", "Local", "GTD (Delta)", "TAX","LC_AMOUNT"]]
+ #   merged.rename(columns={"LC_AMOUNT":"PRIOR_YEAR"},inplace=True)
+ #   merged['POSTING'] = merged['TAX'] - merged['PRIOR_YEAR']
+
 #    merged = merged.concat(other = df_dt, on = 'CONCEPT', how = 'left')
 
-    df_dt.to_excel(f"{os.environ['USERPROFILE']}\\{ru}-Detail_of_DEFERRED_BALANCESv2.xlsx")
-    merged_detail.to_excel(f"{os.environ['USERPROFILE']}\\{ru}-Detail_of_DEFERRED_BALANCES.xlsx")
+#    df_dt.to_excel(f"{os.environ['USERPROFILE']}\\{ru}-Detail_of_DEFERRED_BALANCESv2.xlsx")
+#    merged_detail.to_excel(f"{os.environ['USERPROFILE']}\\{ru}-Detail_of_DEFERRED_BALANCES.xlsx")
 
 
     return merged, exchange_rate, GTD_detail

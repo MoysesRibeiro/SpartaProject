@@ -29,8 +29,11 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bae8dee9-df16-4246-910d-8a105af73638" name="Changes" comment="fixed some formulas and added some other fixes">
+    <list default="true" id="bae8dee9-df16-4246-910d-8a105af73638" name="Changes" comment="fixed some formulas and added some other fixes_2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/excel_manipulator.py" beforeDir="false" afterPath="$PROJECT_DIR$/excel_manipulator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fed.py" beforeDir="false" afterPath="$PROJECT_DIR$/fed.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +43,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Moyses" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -179,7 +182,14 @@
       <option name="project" value="LOCAL" />
       <updated>1710862587563</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fixed some formulas and added some other fixes_2">
+      <created>1710865355887</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1710865355887</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -215,45 +225,47 @@
     <MESSAGE value="ALGUNS AJUSTES&#10;&#10;aDJUST TO MAKE IT TO CREATE THE NEW PATH AND TXT FILE &#10;&#10;PLUS SOME ADJUSTMENTS IN THE SEGMENTATION AND CREATION OF SA DOCUMENT" />
     <MESSAGE value="fixed some formulas" />
     <MESSAGE value="fixed some formulas and added some other fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed some formulas and added some other fixes" />
+    <MESSAGE value="fixed some formulas and added some other fixes_2" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed some formulas and added some other fixes_2" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1515" height="235" key="GridCell.Tab.0.bottom" timestamp="1710863501793">
-      <screen x="-1920" y="0" width="1536" height="824" />
+    <state width="1515" height="235" key="GridCell.Tab.0.bottom" timestamp="1711475794086">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="235" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1710863501793" />
-    <state width="1515" height="201" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709748241653" />
+    <state width="1515" height="235" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1711470187577" />
+    <state width="1515" height="235" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1711475794086" />
     <state width="1515" height="201" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1709842558511" />
-    <state width="1515" height="235" key="GridCell.Tab.0.center" timestamp="1710863501793">
-      <screen x="-1920" y="0" width="1536" height="824" />
+    <state width="1515" height="235" key="GridCell.Tab.0.center" timestamp="1711475794086">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="235" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1710863501793" />
-    <state width="1515" height="201" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709748241653" />
+    <state width="1515" height="235" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1711470187577" />
+    <state width="1515" height="235" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1711475794086" />
     <state width="1515" height="201" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1709842558511" />
-    <state width="1515" height="235" key="GridCell.Tab.0.left" timestamp="1710863501793">
-      <screen x="-1920" y="0" width="1536" height="824" />
+    <state width="1515" height="235" key="GridCell.Tab.0.left" timestamp="1711475794086">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="235" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1710863501793" />
-    <state width="1515" height="201" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709748241653" />
+    <state width="1515" height="235" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1711470187577" />
+    <state width="1515" height="235" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1711475794086" />
     <state width="1515" height="201" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1709842558510" />
-    <state width="1515" height="235" key="GridCell.Tab.0.right" timestamp="1710863501793">
-      <screen x="-1920" y="0" width="1536" height="824" />
+    <state width="1515" height="235" key="GridCell.Tab.0.right" timestamp="1711475794086">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="235" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1710863501793" />
-    <state width="1515" height="201" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709748241653" />
+    <state width="1515" height="235" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1711470187577" />
+    <state width="1515" height="235" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1711475794086" />
     <state width="1515" height="201" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1709842558511" />
     <state x="407" y="174" key="MultipleFileMergeDialog" timestamp="1709648541014">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="407" y="174" key="MultipleFileMergeDialog/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709648541014" />
-    <state x="-1559" y="145" key="Vcs.Push.Dialog.v2" timestamp="1710862611095">
+    <state x="-1559" y="145" key="Vcs.Push.Dialog.v2" timestamp="1710865359506">
       <screen x="-1920" y="0" width="1536" height="824" />
     </state>
-    <state x="-1559" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1710862611095" />
+    <state x="-1559" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1710865359506" />
     <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709752818749" />
-    <state x="586" y="326" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1709648523549">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="-1334" y="326" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1711469585130">
+      <screen x="-1920" y="0" width="1536" height="824" />
     </state>
+    <state x="-1334" y="326" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1711469585130" />
     <state x="586" y="326" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709648523549" />
   </component>
   <component name="XDebuggerManager">
@@ -261,8 +273,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/excel_manipulator.py</url>
-          <line>552</line>
+          <line>553</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/excel_manipulator.py</url>
+          <line>488</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -361,7 +361,8 @@ def pandas_excel(file_name: str, dataframe_dictionary: dict) -> None:
 
     writer = pd.ExcelWriter(os.environ["USERPROFILE"] + f"\\Desktop\\Sparta_Output\\{file_name}", engine="xlsxwriter")
 
-    dataframe_dictionary.get("trial_balance_delta_between_GAAPs").to_excel(writer, sheet_name="B.GTDs")
+    dataframe_dictionary.get("trial_balance_delta_between_GAAPs").to_excel(writer, sheet_name="B.GTDs",startrow =3)
+    dataframe_dictionary.get("deferred_balances").to_excel(writer, sheet_name="B.GTDs", startrow =3,startcol=9)
     dataframe_dictionary.get("tidy_segmentation").to_excel(writer, sheet_name="D.SEGMENTATION_MASK")
     dataframe_dictionary.get("tidy_segmentation").to_excel(writer, sheet_name="D1.SEGMENTED_IBIT")
     dataframe_dictionary.get("trial_balance_GAAP").to_excel(writer, sheet_name="TB_GAAP")
@@ -662,3 +663,17 @@ def paste_plot(xl, wb):
                                      -1, -1)
 
     sheet.Cells(1, 1).Select()
+
+def manipulate_gross_timing_difference(xl, wb) -> None:
+    """
+    Puts formulas on the GTDs tab and the value to post.
+
+    """
+    sheet = wb.Worksheets("B.GTDs")
+    sheet.Range("A1").Value = "Commentary regarding sign convention: if BS approach, please notice that the amount of tax corresponds to the Balance Sheet sign convention whereas the PL approach corresponds to the PL sign convention. Thanks"
+    sheet.Range("K4").Value = "BEFORE"
+    sheet.Range("L4").Value = "TO_POST"
+
+    sheet.Range(f"L5:L{sheet.UsedRange.Rows.Count}").Value = '=IF(INDIRECT("C[-5]",FALSE)="Y",SUMIF(B:B,INDIRECT("C[-2]",FALSE),F:F)-INDIRECT("C[-1]",FALSE),0)'
+
+
