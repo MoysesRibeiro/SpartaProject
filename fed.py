@@ -403,9 +403,9 @@ def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, pe
     merged['TAX'] = merged['GTD (Delta)'] * -tax_rate / 100
     #merged['TAX_USD'] = merged['TAX'] / er
 
-    merged['CONCEPT'] = ''
+    merged['CONCEPT'] = 'Other'
     for i in range(len(merged['CONCEPT'])):
-        merged['CONCEPT'][i] = variables.dictionary_main_vs_concept.get(int(merged.index[i]))
+        merged['CONCEPT'][i] = variables.dictionary_main_vs_concept.get(int(merged.index[i]),"Other")
     merged.reset_index(inplace=True)
     merged.set_index(['Main','CONCEPT'],inplace=True)
     merged = merged.loc[(merged[merged.columns[0:2]]!=0).all(axis=1)]
