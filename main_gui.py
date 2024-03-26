@@ -165,7 +165,7 @@ class MainGUI(tk.Tk):
         file_name = f'{ru}-{period}-{r_year}--Generated-by-Sparta.xlsx'
         file_path = f"{os.environ['USERPROFILE']}\\Desktop\\Sparta_Output\\{file_name}"
         trial_balance_GAAP, trial_balance_local, trial_balance_delta_between_GAAPs, perms_from_excel, exchange_rate, \
-            credits_from_excel, GTD_detail, temps_from_excel, signal = self.get_data_from_fed(
+            credits_from_excel, GTD_detail, temps_from_excel, signal, df_dt = self.get_data_from_fed(
                 ru, r_year, period, currency, tax_rate, methodology, ytd)
 
         segmentation, tidy_segmentation = fed.get_segmentation_from_fed(self.__FED, ru, r_year, period, ytd)
@@ -176,6 +176,7 @@ class MainGUI(tk.Tk):
         df_dictionary = {"exchange_rate": exchange_rate, "trial_balance_GAAP": trial_balance_GAAP,
                          "trial_balance_local": trial_balance_local,
                          "trial_balance_delta_between_GAAPs": trial_balance_delta_between_GAAPs,
+                         "deferred_balances":df_dt,
                          "perms_from_excel": perms_from_excel, "credits_from_excel": credits_from_excel,
                          "temps_from_excel": temps_from_excel,
                          "GTD_detail": GTD_detail,
@@ -228,8 +229,11 @@ class MainGUI(tk.Tk):
 
         excel_manipulator.format_cells(xl, wb)
         excel_manipulator.format_tab_color(wb)
+        if methodology == 'GAAP':
+            excel_manipulator.manipulate_gross_timing_difference(xl, wb)
         if country == 'US':
             excel_manipulator.transform_in_us(wb)
+
 
         if signal:
             excel_manipulator.paste_plot(xl, wb)
@@ -305,6 +309,7 @@ class MainGUI(tk.Tk):
                 self.__FED, ru, r_year, period, currency, tax_rate)\
             if method == 'Local' else fed.get_trial_balance_delta_between_gaaps_BS(
                 self.__FED, ru, r_year, period, currency, tax_rate)
+        df_dt = fed.get_deferred_tax_balances(self.__FED, ru, year, period)
         print("Reading Perms from excel...")
         perms_from_excel = fed.get_perms_from_excel(ru, r_year, period, self.adjustment_path)
 
@@ -315,7 +320,7 @@ class MainGUI(tk.Tk):
         credits_from_excel = fed.get_credits_from_excel(ru, r_year, period, self.adjustment_path)
 
         return trial_balance_GAAP, trial_balance_local, trial_balance_delta_between_GAAPs, perms_from_excel, \
-            exchange_rate, credits_from_excel, GTD_detail, temps_from_excel, signal
+            exchange_rate, credits_from_excel, GTD_detail, temps_from_excel, signal,df_dt
 
 
 
