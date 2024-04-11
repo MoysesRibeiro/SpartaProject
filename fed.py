@@ -337,7 +337,7 @@ def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, pe
     exchange_rate, er = scan_excahnge_rate(currency, data)
 
     query = f'''
-        SELECT "G/L Acct", sum("GC Amount")/{__SCALLING_FACTOR__} AS AMOUNT, 
+        SELECT "Fiscal Yr","Period","G/L Acct", sum("GC Amount")/{__SCALLING_FACTOR__} AS AMOUNT, 
             sum("LC Amount")/{__SCALLING_FACTOR__} AS LC_AMOUNT
         FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_FI_TRIAL_BALANCE_REPORT
         WHERE "Company Code" ='{ru}'
@@ -355,79 +355,71 @@ def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, pe
             AND "Period" <= '{period}'
             AND LEFT("G/L Acct",1) = 'N'
             AND LEFT("G/L Acct",2) <> 'N0'
-        GROUP BY "G/L Acct"
+        GROUP BY ALL
+        ORDER BY "G/L Acct"
+        '''
+    df = snow_flake_connection.execute_query(query, ru, year, period).fetch_pandas_all()
+
+    df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
+    df['LC_AMOUNT'] = df['LC_AMOUNT'].astype(np.int64)
+    df = np.round(df, 0)
+
+
+
+    query_py = f'''
+        SELECT "Fiscal Yr","Period","G/L Acct", sum("GC Amount")/{__SCALLING_FACTOR__} AS AMOUNT, 
+            sum("LC Amount")/{__SCALLING_FACTOR__} AS LC_AMOUNT
+        FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_FI_TRIAL_BALANCE_REPORT
+        WHERE "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{int(year)-1}'
+            AND "Period" <= '12'
+            AND LENGTH("G/L Acct") = '9'
+            AND RIGHT("G/L Acct",3) = '799'
+        OR "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{int(year)-1}'
+            AND "Period" <= '12'
+            AND LENGTH("G/L Acct") = '9'
+            AND RIGHT(LEFT("G/L Acct",5),2) = '98'
+        OR "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{int(year)-1}'
+            AND "Period" <= '12'
+            AND LEFT("G/L Acct",1) = 'N'
+            AND LEFT("G/L Acct",2) <> 'N0'
+        GROUP BY ALL
         ORDER BY "G/L Acct"
         '''
 
 
 
-    df = snow_flake_connection.execute_query(query, ru, year, period).fetch_pandas_all()
-    df_dt = get_deferred_tax_balances(snow_flake_connection, ru, year, period)
+    df_py = snow_flake_connection.execute_query(query_py, ru, year, period).fetch_pandas_all()
+    df_py['AMOUNT'] = df_py['AMOUNT'].astype(np.int64)
+    df_py['LC_AMOUNT'] = df_py['LC_AMOUNT'].astype(np.int64)
+    df_py = np.round(df_py, 0)
 
-    df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
-    df['LC_AMOUNT'] = df['LC_AMOUNT'].astype(np.int64)
-    #df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
-    df = np.round(df, 0)
+    cy = transform_DIT_pivot_table(df)
+    py = transform_DIT_pivot_table(df_py)
 
-    # manipulation
-    df['Is_EMOnly'] = (df["G/L Acct"].str[-3:]) == '799'
-    df['Is_Local'] = df['Is_EMOnly'] != True
+    pivot_cy = cy.groupby(['Main', 'CONCEPT']).sum()
+    pivot_py = py.groupby(['Main', 'CONCEPT']).sum()
+    pivot_cy.reset_index(inplace=True)
+    pivot_py.reset_index(inplace=True)
+
+    super_df = pd.merge(pivot_cy, pivot_py, on=['Main', 'CONCEPT'], how='outer', suffixes=('_cy', '_py')).fillna(0)
+
+    super_df['Change'] = super_df["GTD (Delta)_cy"] - super_df['GTD (Delta)_py']
+    super_df['TAX'] = super_df['Change'] * -tax_rate/100
+
+    super_df.set_index(['Main','CONCEPT'],inplace=True)
 
     GTD_detail = df
 
-    # ver depois
-    df['Main'] = ''
 
-    for i in range(0,len(df['Main'])):
-        if df["G/L Acct"][i][:1] != 'N':
-            df['Main'][i] = df["G/L Acct"][i][:3]
+    ###########################################################
 
-        else:
-            df['Main'][i] = df["G/L Acct"][i][1:4]
+    #merged.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_1.xlsx')
 
 
-
-    pivot_local = df[df['Is_Local'] == True].groupby('Main').sum()['LC_AMOUNT']
-    pivot_local.name = 'Local'
-    pivot_GAAP = df[df['Is_EMOnly'] == True].groupby('Main').sum()['LC_AMOUNT']
-    pivot_GAAP.name = 'GAAP'
-
-    merged = pd.DataFrame(data=[pivot_GAAP, pivot_local]).T
-    merged = merged.fillna(0)
-
-    merged['GTD (Delta)'] = merged['GAAP'] - merged['Local']
-
-    merged = merged[~merged.index.isin(['609', '710', '810', '841','845','846','860','901','999'])]
-
-    merged = merged.sort_values('Main')
-    merged['TAX'] = merged['GTD (Delta)'] * -tax_rate / 100
-    #merged['TAX_USD'] = merged['TAX'] / er
-
-    merged['CONCEPT'] = ''
-    for i in range(len(merged['CONCEPT'])):
-        merged['CONCEPT'][i] = variables.dictionary_main_vs_concept.get(int(merged.index[i]))
-
-
-    merged_detail = merged
-    merged.reset_index(inplace=True)
-
-    merged.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_1.xlsx')
-    df_dt.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_2.xlsx')
-
-    merged = pd.concat(objs = [merged,df_dt[['CONCEPT','LC_AMOUNT']]], axis = 0, join = 'outer')
-
-    merged = merged.groupby(['Main','CONCEPT']).sum()[["GAAP", "Local", "GTD (Delta)", "TAX","LC_AMOUNT"]]
-    merged.rename(columns={"LC_AMOUNT":"PRIOR_YEAR"},inplace=True)
-    merged['POSTING'] = merged['TAX'] - merged['PRIOR_YEAR']
-
-#
-#    merged = merged.concat(other = df_dt, on = 'CONCEPT', how = 'left')
-
-    df_dt.to_excel(f"{os.environ['USERPROFILE']}\\{ru}-Detail_of_DEFERRED_BALANCESv2.xlsx")
-    merged_detail.to_excel(f"{os.environ['USERPROFILE']}\\{ru}-Detail_of_DEFERRED_BALANCES.xlsx")
-
-
-    return merged, exchange_rate, GTD_detail
+    return super_df, exchange_rate, GTD_detail
 
 def get_perms_from_excel(ru, year, period, p):
     print("Getting perms from :", p)
@@ -541,3 +533,46 @@ def get_segmentation_from_fed(snow_flake_connection, ru, year, period, ytd):
         tidy_df.drop(labels=['EffDate','BA'], axis='columns', inplace=True)
 
     return df, tidy_df
+
+def transform_DIT_pivot_table(df):
+    ###############
+    # manipulation
+    df['Is_EMOnly'] = (df["G/L Acct"].str[-3:]) == '799'
+    df['Is_Local'] = df['Is_EMOnly'] != True
+
+    GTD_detail = df
+
+    # ver depois
+    df['Main'] = ''
+
+    for i in range(0, len(df['Main'])):
+        if df["G/L Acct"][i][:1] != 'N':
+            df['Main'][i] = df["G/L Acct"][i][:3]
+
+        else:
+            df['Main'][i] = df["G/L Acct"][i][1:4]
+
+    pivot_local = df[df['Is_Local'] == True].groupby('Main').sum()['LC_AMOUNT']
+    pivot_local.name = 'Local'
+    pivot_GAAP = df[df['Is_EMOnly'] == True].groupby('Main').sum()['LC_AMOUNT']
+    pivot_GAAP.name = 'GAAP'
+
+    merged = pd.DataFrame(data=[pivot_GAAP, pivot_local]).T
+    merged = merged.fillna(0)
+
+    merged['GTD (Delta)'] = merged['GAAP'] - merged['Local']
+
+    merged = merged[~merged.index.isin(['609', '710', '810', '841', '845', '846', '860', '901', '999'])]
+
+    merged = merged.sort_values('Main')
+    # merged['TAX'] = merged['GTD (Delta)'] * -tax_rate / 100
+    # merged['TAX_USD'] = merged['TAX'] / er
+
+    merged['CONCEPT'] = ''
+    for i in range(len(merged['CONCEPT'])):
+        merged['CONCEPT'][i] = variables.dictionary_main_vs_concept.get(int(merged.index[i]))
+
+    merged_detail = merged
+    merged.reset_index(inplace=True)
+
+    return merged
