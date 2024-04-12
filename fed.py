@@ -408,18 +408,20 @@ def get_trial_balance_delta_between_gaaps_BS(snow_flake_connection, ru, year, pe
 
     super_df['Change'] = super_df["GTD (Delta)_cy"] - super_df['GTD (Delta)_py']
     super_df['TAX'] = super_df['Change'] * -tax_rate/100
+    super_df['IS_TAXABLE'] = 'Y'
 
     super_df.set_index(['Main','CONCEPT'],inplace=True)
 
     GTD_detail = df
 
+    common_dit = get_common_dit(snow_flake_connection, ru, year, period, currency, tax_rate)
 
     ###########################################################
 
     #merged.to_excel(r'C:\Users\mdlzrib\desktop\testing_sparta_1.xlsx')
 
 
-    return super_df, exchange_rate, GTD_detail
+    return super_df, exchange_rate, GTD_detail,common_dit
 
 def get_perms_from_excel(ru, year, period, p):
     print("Getting perms from :", p)
@@ -542,6 +544,125 @@ def transform_DIT_pivot_table(df):
 
     GTD_detail = df
 
+    df = get_main_account(df)
+
+
+    pivot_local = df[df['Is_Local'] == True].groupby('Main').sum()['LC_AMOUNT']
+    pivot_local.name = 'Local'
+    pivot_GAAP = df[df['Is_EMOnly'] == True].groupby('Main').sum()['LC_AMOUNT']
+    pivot_GAAP.name = 'GAAP'
+
+    merged = pd.DataFrame(data=[pivot_GAAP, pivot_local]).T
+    merged = merged.fillna(0)
+
+    merged['CONCEPT'] = ''
+    for i in range(len(merged['CONCEPT'])):
+        merged['CONCEPT'][i] = variables.dictionary_main_vs_concept.get(int(merged.index[i]))
+
+    merged['GTD (Delta)'] = merged['GAAP'] - merged['Local']
+
+    merged = merged[~merged.index.isin(['609', '710', '810', '841', '845', '846', '860', '901', '999'])]
+
+    merged = merged.sort_values('Main')
+    # merged['TAX'] = merged['GTD (Delta)'] * -tax_rate / 100
+    # merged['TAX_USD'] = merged['TAX'] / er
+
+
+    merged_detail = merged
+    merged.reset_index(inplace=True)
+
+    return merged
+
+def get_common_dit(snow_flake_connection, ru, year, period, currency, tax_rate):
+    """
+    to get common DIT
+
+    """
+
+    query = f'''
+        SELECT "Fiscal Yr","Period","G/L Acct", sum("GC Amount")/{__SCALLING_FACTOR__} AS AMOUNT, 
+            sum("LC Amount")/{__SCALLING_FACTOR__} AS LC_AMOUNT
+        FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_FI_TRIAL_BALANCE_REPORT
+        WHERE "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{year}'
+            AND "Period" <= '{period}'
+            AND LENGTH("G/L Acct") = '9'
+            AND RIGHT("G/L Acct",3) <> '799'
+        OR "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{year}'
+            AND "Period" <= '{period}'
+            AND LENGTH("G/L Acct") = '9'
+            AND RIGHT(LEFT("G/L Acct",5),2) <> '98'
+        OR "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{year}'
+            AND "Period" <= '{period}'
+            AND LEFT("G/L Acct",1) <> 'N'
+        GROUP BY ALL
+        ORDER BY "G/L Acct"
+        '''
+
+    query_py = f'''
+        SELECT "Fiscal Yr","Period","G/L Acct", sum("GC Amount")/{__SCALLING_FACTOR__} AS AMOUNT, 
+            sum("LC Amount")/{__SCALLING_FACTOR__} AS LC_AMOUNT
+        FROM FIN_CORP_RESTR_PRD_ANALYTICS.JET_CONSUMPTION.VW_FI_TRIAL_BALANCE_REPORT
+        WHERE "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{int(year)-1}'
+            AND "Period" <= '12'
+            AND LENGTH("G/L Acct") = '9'
+            AND RIGHT("G/L Acct",3) <> '799'
+        OR "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{int(year)-1}'
+            AND "Period" <= '12'
+            AND LENGTH("G/L Acct") = '9'
+            AND RIGHT(LEFT("G/L Acct",5),2) <> '98'
+        OR "Company Code" ='{ru}'
+            AND "Fiscal Yr" ='{int(year)-1}'
+            AND "Period" <= '12'
+            AND LEFT("G/L Acct",1) <> 'N'
+        GROUP BY ALL
+        ORDER BY "G/L Acct"
+        '''
+
+    df = snow_flake_connection.execute_query(query, ru, year, period).fetch_pandas_all()
+
+    df['AMOUNT'] = df['AMOUNT'].astype(np.int64)
+    df['LC_AMOUNT'] = df['LC_AMOUNT'].astype(np.int64)
+    df = np.round(df, 0)
+
+    df_py = snow_flake_connection.execute_query(query_py, ru, year, period).fetch_pandas_all()
+    df_py['AMOUNT'] = df_py['AMOUNT'].astype(np.int64)
+    df_py['LC_AMOUNT'] = df_py['LC_AMOUNT'].astype(np.int64)
+    df_py = np.round(df_py, 0)
+
+    df = get_main_account(df)
+    df_py = get_main_account(df_py)
+
+
+
+    pivot_cy = df.groupby('Main').sum()
+    pivot_py = df_py.groupby('Main').sum()
+    pivot_cy.reset_index(inplace=True)
+    pivot_py.reset_index(inplace=True)
+
+    super_df = pd.merge(pivot_cy, pivot_py, on='Main', how='outer', suffixes=('_cy', '_py')).fillna(0)
+
+    super_df['CONCEPT'] = ''
+    for i in range(len(super_df['CONCEPT'])):
+        super_df['CONCEPT'][i] = variables.dictionary_main_vs_concept.get(int(super_df.index[i]))
+
+    super_df['N/A_1'] = ''
+    super_df['N/A_2'] = ''
+    super_df['Change'] = super_df["AMOUNT_cy"] - super_df['AMOUNT_py']
+    super_df['TAX'] = super_df['Change'] * -tax_rate / 100
+    super_df['IS_TAXABLE'] = 'Y'
+
+    super_df = super_df[super_df['Main'].isin(['788','770'])]
+    super_df.set_index(['Main','CONCEPT'], inplace=True)
+
+    return super_df
+
+
+def get_main_account(df):
     # ver depois
     df['Main'] = ''
 
@@ -552,27 +673,4 @@ def transform_DIT_pivot_table(df):
         else:
             df['Main'][i] = df["G/L Acct"][i][1:4]
 
-    pivot_local = df[df['Is_Local'] == True].groupby('Main').sum()['LC_AMOUNT']
-    pivot_local.name = 'Local'
-    pivot_GAAP = df[df['Is_EMOnly'] == True].groupby('Main').sum()['LC_AMOUNT']
-    pivot_GAAP.name = 'GAAP'
-
-    merged = pd.DataFrame(data=[pivot_GAAP, pivot_local]).T
-    merged = merged.fillna(0)
-
-    merged['GTD (Delta)'] = merged['GAAP'] - merged['Local']
-
-    merged = merged[~merged.index.isin(['609', '710', '810', '841', '845', '846', '860', '901', '999'])]
-
-    merged = merged.sort_values('Main')
-    # merged['TAX'] = merged['GTD (Delta)'] * -tax_rate / 100
-    # merged['TAX_USD'] = merged['TAX'] / er
-
-    merged['CONCEPT'] = ''
-    for i in range(len(merged['CONCEPT'])):
-        merged['CONCEPT'][i] = variables.dictionary_main_vs_concept.get(int(merged.index[i]))
-
-    merged_detail = merged
-    merged.reset_index(inplace=True)
-
-    return merged
+    return df

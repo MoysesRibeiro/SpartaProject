@@ -362,7 +362,9 @@ def pandas_excel(file_name: str, dataframe_dictionary: dict) -> None:
     writer = pd.ExcelWriter(os.environ["USERPROFILE"] + f"\\Desktop\\Sparta_Output\\{file_name}", engine="xlsxwriter")
 
     dataframe_dictionary.get("trial_balance_delta_between_GAAPs").to_excel(writer, sheet_name="B.GTDs",startrow =3)
-    dataframe_dictionary.get("deferred_balances").to_excel(writer, sheet_name="B.GTDs", startrow =3,startcol=9)
+    #dataframe_dictionary.get("deferred_balances").to_excel(writer, sheet_name="B.GTDs", startrow =,startcol=9)
+
+    dataframe_dictionary.get("common_dit").to_excel(writer, sheet_name="B.GTDs",startrow =len(dataframe_dictionary.get("trial_balance_delta_between_GAAPs").index)+8)
     dataframe_dictionary.get("tidy_segmentation").to_excel(writer, sheet_name="D.SEGMENTATION_MASK")
     dataframe_dictionary.get("tidy_segmentation").to_excel(writer, sheet_name="D1.SEGMENTED_IBIT")
     dataframe_dictionary.get("trial_balance_GAAP").to_excel(writer, sheet_name="TB_GAAP")
@@ -372,6 +374,7 @@ def pandas_excel(file_name: str, dataframe_dictionary: dict) -> None:
     dataframe_dictionary.get("credits_from_excel").to_excel(writer, sheet_name="Credits")
     dataframe_dictionary.get("GTD_detail").to_excel(writer, sheet_name="GTDs Detail")
     dataframe_dictionary.get("exchange_rate").to_excel(writer, sheet_name="Exchange Rate")
+
     # dataframe_dictionary.get("segmentation").to_excel(writer, sheet_name="SEGMENTED_IBIT_ORIGINAL")
 
     writer.close()
@@ -448,7 +451,8 @@ def format_cells(xl, wb):
             i.Columns("A:O").Font.Name = "Courier New"
             continue
         if i.Name == "B.GTDs":
-            i.Columns("A:E").ColumnWidth = 12
+            i.Columns("C:K").ColumnWidth = 12
+            i.Range("C:K").NumberFormat = "#,##0"
             continue
 
         if i.Name == "D.SEGMENTATION_MASK":
@@ -671,19 +675,19 @@ def manipulate_gross_timing_difference(xl, wb) -> None:
     """
     sheet = wb.Worksheets("B.GTDs")
     sheet.Range("A1").Value = "Commentary regarding sign convention: if BS approach, please notice that the amount of tax corresponds to the Balance Sheet sign convention whereas the PL approach corresponds to the PL sign convention. Thanks"
-    sheet.Range("K4").Value = "BEFORE"
-    sheet.Range("L4").Value = "TO_POST"
-    sheet.Range("M4").Value = "ENDING_BALANCE"
-    sheet.Range(f"M5:M{sheet.UsedRange.Rows.Count}").Value = '=INDIRECT("RC[-1]",FALSE)+INDIRECT("RC[-2]",FALSE)'
-    sheet.Range(f"F5:F{sheet.UsedRange.Rows.Count}").Value = '=IF(INDIRECT("RC[1]",FALSE)="Y",INDIRECT("RC[-1]",FALSE)*-A.TT!$E$30,0)'
-    sheet.Columns("G:M").ColumnWidth = 15.00
-    sheet.Range("K4").Copy()
-    sheet.Range("L4:M4").PasteSpecial(Paste=-4122,
-                                      Operation=-4142,
-                                      SkipBlanks=False,
-                                      Transpose=False)
+    #sheet.Range("K4").Value = "BEFORE"
+    #sheet.Range("L4").Value = "TO_POST"
+    #sheet.Range("M4").Value = "ENDING_BALANCE"
+    #sheet.Range(f"M5:M{sheet.UsedRange.Rows.Count}").Value = '=INDIRECT("RC[-1]",FALSE)+INDIRECT("RC[-2]",FALSE)'
+    #sheet.Range(f"F5:F{sheet.UsedRange.Rows.Count}").Value = '=IF(INDIRECT("RC[1]",FALSE)="Y",INDIRECT("RC[-1]",FALSE)*-A.TT!$E$30,0)'
+    #sheet.Columns("G:M").ColumnWidth = 15.00
+    #sheet.Range("K4").Copy()
+    #sheet.Range("L4:M4").PasteSpecial(Paste=-4122,
+    #                                  Operation=-4142,
+    #                                  SkipBlanks=False,
+    #                                  Transpose=False)
 
-    sheet.Range(f"L5:L{sheet.UsedRange.Rows.Count}").Value = '=SUMIF(B:B,INDIRECT("RC[-2]",FALSE),F:F)-INDIRECT("RC[-1]",FALSE)'
+    #sheet.Range(f"L5:L{sheet.UsedRange.Rows.Count}").Value = '=SUMIF(B:B,INDIRECT("RC[-2]",FALSE),F:F)-INDIRECT("RC[-1]",FALSE)'
 
 
 

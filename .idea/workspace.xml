@@ -29,9 +29,11 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bae8dee9-df16-4246-910d-8a105af73638" name="Changes" comment="Changed how to pick GTDs for GAAP balances like Balazs requested2">
+    <list default="true" id="bae8dee9-df16-4246-910d-8a105af73638" name="Changes" comment="Changed how to pick GTDs for GAAP balances like Balazs requested3">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/excel_manipulator.py" beforeDir="false" afterPath="$PROJECT_DIR$/excel_manipulator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fed.py" beforeDir="false" afterPath="$PROJECT_DIR$/fed.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +182,14 @@
       <option name="project" value="LOCAL" />
       <updated>1710862587563</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Changed how to pick GTDs for GAAP balances like Balazs requested3">
+      <created>1712862827723</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1712862827723</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -216,41 +225,43 @@
     <MESSAGE value="ALGUNS AJUSTES&#10;&#10;aDJUST TO MAKE IT TO CREATE THE NEW PATH AND TXT FILE &#10;&#10;PLUS SOME ADJUSTMENTS IN THE SEGMENTATION AND CREATION OF SA DOCUMENT" />
     <MESSAGE value="fixed some formulas" />
     <MESSAGE value="fixed some formulas and added some other fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed some formulas and added some other fixes" />
+    <MESSAGE value="Changed how to pick GTDs for GAAP balances like Balazs requested3" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed how to pick GTDs for GAAP balances like Balazs requested3" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1515" height="235" key="GridCell.Tab.0.bottom" timestamp="1712862183159">
+    <state width="1515" height="235" key="GridCell.Tab.0.bottom" timestamp="1712941464781">
       <screen x="-1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="235" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712862183159" />
+    <state width="1515" height="235" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712941464781" />
     <state width="1515" height="235" key="GridCell.Tab.0.bottom/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1712334601858" />
     <state width="1515" height="201" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1709842558511" />
-    <state width="1515" height="235" key="GridCell.Tab.0.center" timestamp="1712862183159">
+    <state width="1515" height="235" key="GridCell.Tab.0.center" timestamp="1712941464781">
       <screen x="-1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="235" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712862183159" />
+    <state width="1515" height="235" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712941464781" />
     <state width="1515" height="235" key="GridCell.Tab.0.center/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1712334601858" />
     <state width="1515" height="201" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1709842558511" />
-    <state width="1515" height="235" key="GridCell.Tab.0.left" timestamp="1712862183159">
+    <state width="1515" height="235" key="GridCell.Tab.0.left" timestamp="1712941464781">
       <screen x="-1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="235" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712862183159" />
+    <state width="1515" height="235" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712941464781" />
     <state width="1515" height="235" key="GridCell.Tab.0.left/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1712334601858" />
     <state width="1515" height="201" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1709842558510" />
-    <state width="1515" height="235" key="GridCell.Tab.0.right" timestamp="1712862183159">
+    <state width="1515" height="235" key="GridCell.Tab.0.right" timestamp="1712941464781">
       <screen x="-1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="235" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712862183159" />
+    <state width="1515" height="235" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712941464781" />
     <state width="1515" height="235" key="GridCell.Tab.0.right/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1712334601858" />
     <state width="1515" height="201" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1709842558511" />
-    <state x="407" y="174" key="MultipleFileMergeDialog" timestamp="1709648541014">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="407" y="174" key="MultipleFileMergeDialog/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709648541014" />
-    <state x="-1559" y="145" key="Vcs.Push.Dialog.v2" timestamp="1710862611095">
+    <state x="-1513" y="174" key="MultipleFileMergeDialog" timestamp="1712863563969">
       <screen x="-1920" y="0" width="1536" height="824" />
     </state>
-    <state x="-1559" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1710862611095" />
+    <state x="-1513" y="174" key="MultipleFileMergeDialog/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712863563969" />
+    <state x="407" y="174" key="MultipleFileMergeDialog/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709648541014" />
+    <state x="-1559" y="145" key="Vcs.Push.Dialog.v2" timestamp="1712862831129">
+      <screen x="-1920" y="0" width="1536" height="824" />
+    </state>
+    <state x="-1559" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1536.824@-1920.0.1536.824" timestamp="1712862831129" />
     <state x="361" y="145" key="Vcs.Push.Dialog.v2/0.0.1536.824/-1920.0.1536.824@0.0.1536.824" timestamp="1709752818749" />
     <state x="586" y="326" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1709648523549">
       <screen x="0" y="0" width="1536" height="824" />
@@ -262,8 +273,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/excel_manipulator.py</url>
-          <line>587</line>
+          <line>591</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/fed.py</url>
+          <line>538</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/excel_manipulator.py</url>
+          <line>382</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
