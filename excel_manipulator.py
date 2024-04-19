@@ -324,7 +324,7 @@ def create_cf216_mask(xl, wb, dataframe_dictionary: dict, currency: str) -> None
     sheet.Cells(23, 2).Value = 0
     sheet.Cells(23, 3).Value = 0
     sheet.Cells(23, 4).Value = 0
-    sheet.Cells(23, 5).Value = "=+A.TT!E18/'Exchange Rate'!B4-E10-SUM(B.GTDs!E:E)"
+    sheet.Cells(23, 5).Value = f"=+A.TT!E18/'Exchange Rate'!B4-E10-SUM(B.GTDs!{'E1:E' if wb.Worksheets('Cover').Range('B8').Value != 'Methodology used in this working paper : GAAP' else 'I1:I'}{sheet.UsedRange.Rows.Count-4})"
 
     sheet.Cells(23, 6).Value = "C"
     sheet.Cells(23, 6).Font.Bold = True
@@ -408,8 +408,8 @@ def create_memo_forex(wb) -> None:
 
     sheet.Cells(4, 1).Value = "Add Exchange Rate Delta"
     sheet.Cells(4,
-                2).Value = """=-((C.CF216!E10-'C1.MEMO FOREX'!B3)-(A.TT!E18/'Exchange Rate'!B4
-                -'C1.MEMO FOREX'!B2)+SUM(B.GTDs!E:E))"""
+                2).Value = f"""=-((C.CF216!E10-'C1.MEMO FOREX'!B3)-(A.TT!E18/'Exchange Rate'!B4
+                -'C1.MEMO FOREX'!B2)+SUM(B.GTDs!{'E1:E' if wb.Worksheets('Cover').Range('B8').Value != 'Methodology used in this working paper : GAAP' else 'I1:I'}{wb.Worksheets('B.GTDs').UsedRange.Rows.Count-4}))"""
 
     sheet.Cells(6, 1).Value = "Total"
     sheet.Cells(6, 2).Value = "=+B2-B3+B4"

@@ -282,7 +282,10 @@ def get_trial_balance_delta_between_gaaps_PL(snow_flake_connection, ru, year, pe
     merged.set_index([merged.index, merged['CONCEPT']], inplace=True)
     merged.drop('CONCEPT', axis=1, inplace=True)
     merged.to_excel(f"{os.environ['USERPROFILE']}\\SpartaTemp_delta_between_GAAPs.xlsx")
-    return merged, exchange_rate, GTD_detail
+
+    common_dit = get_common_dit(snow_flake_connection, ru, year, period, currency, tax_rate)
+
+    return merged, exchange_rate, GTD_detail, common_dit
 
 def get_deferred_tax_balances(snow_flake_connection, ru, year, period):
     """
